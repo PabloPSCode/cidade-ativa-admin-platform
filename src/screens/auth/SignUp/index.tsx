@@ -8,9 +8,9 @@ export function SignUp() {
   };
 
   return (
-    <div className="flex flex-col">
-      <div className="flex flex-row mb-2 w-full sm:w-[400px] ml-8 sm:mx-auto">
-        <HeaderNavigation screenTitle="Cadastro" />
+    <div className="flex w-full max-w-[460px] flex-col">
+      <div className="mb-5">
+        <HeaderNavigation screenTitle="Cadastro de administrador" />
       </div>
       <SignUpForm onSubmit={handleSubmit} />
     </div>

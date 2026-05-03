@@ -1,5 +1,5 @@
 import { InputHTMLAttributes, forwardRef } from "react";
-import "../../../styles/globals.css"
+import "../../../styles/globals.css";
 
 interface TextInputProps extends InputHTMLAttributes<HTMLInputElement> {
   inputLabel: string;
@@ -8,12 +8,12 @@ interface TextInputProps extends InputHTMLAttributes<HTMLInputElement> {
 export const TextInput = forwardRef<HTMLInputElement, TextInputProps>(
   ({ inputLabel, ...rest }, ref) => {
     return (
-      <div className="mb-2 w-full">
-        <span className="text-gray-800 dark:text-gray-200 text-[12px] lg:text-sm">
+      <div className="mb-1.5 w-full">
+        <span className="text-[12px] font-semibold text-[#4e4e4e]">
           {inputLabel}
         </span>
         <input
-          className="w-full h-[52px] p-4 border-2 rounded-lg text-gray-700 dark:text-gray-100 focus:border-blue-700 focus:border-3 focus:outline-none focus:text-gray-700 bg-white dark:bg-slate-700 placeholder-custom"
+          className="placeholder-custom mt-1 h-[40px] w-full rounded border border-[#cfcfcf] bg-[#f0f0f0] px-3 text-[13px] text-[#535353] outline-none focus:border-[#b8b8b8]"
           ref={ref}
           {...rest}
         />

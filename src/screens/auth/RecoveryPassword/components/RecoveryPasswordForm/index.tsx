@@ -1,17 +1,19 @@
-import { REQUIRED_FIELD_MESSAGE } from "@/appConstants/index";
+import {
+  PHONE_INVALID_MESSAGE,
+  REQUIRED_FIELD_MESSAGE,
+} from "@/appConstants/index";
 import { Button } from "@/components/buttons/Button";
 import { ErrorMessage } from "@/components/inputs/ErrorMessage";
 import { MaskedTextInput } from "@/components/inputs/MaskedTextInput";
-import { TextInput } from "@/components/inputs/TextInput";
 import { Text } from "@/components/typography/Text";
-import { cpfMask } from "@/utils/masks";
+import { phoneMask } from "@/utils/masks";
+import { phoneValidationRegex } from "@/utils/regex";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { useForm } from "react-hook-form";
+import { SubmitHandler, useForm } from "react-hook-form";
 import * as yup from "yup";
 
 export interface RecoveryPasswordInputs {
-  email: string;
-  cpf: string;
+  phone: string;
 }
 
 interface RecoveryPasswordFormProps {
@@ -22,60 +24,50 @@ export default function RecoveryPasswordForm({
   onSubmit,
 }: RecoveryPasswordFormProps) {
   const validationSchema = yup.object({
-    email: yup.string().required(REQUIRED_FIELD_MESSAGE),
-    cpf: yup.string().required(REQUIRED_FIELD_MESSAGE),
+    phone: yup
+      .string()
+      .matches(phoneValidationRegex, PHONE_INVALID_MESSAGE)
+      .required(REQUIRED_FIELD_MESSAGE),
   });
 
   const {
     register,
     handleSubmit,
-    formState: { errors },
-    watch,
-  } = useForm({
+    formState: { errors, isValid },
+  } = useForm<RecoveryPasswordInputs>({
     resolver: yupResolver(validationSchema),
+    mode: "onChange",
   });
 
-  const handleSubmitForm = (data: RecoveryPasswordInputs) => {
+  const handleSubmitForm: SubmitHandler<RecoveryPasswordInputs> = (data) => {
     onSubmit(data);
   };
 
-  const emailValue = watch("email");
-  const cpfValue = watch("cpf");
-
   return (
     <form
-      className="max-w-lg bg-gray-50 dark:bg-slate-800   p-6 shadow-xl rounded-lg mx-auto w-[90%] lg:w-[400px]  mb-[40px] lg:mb-0"
+      className="w-full rounded-2xl border border-[#e8e8e8] bg-white p-8 shadow-md"
       onSubmit={handleSubmit(handleSubmitForm)}
     >
-      <div className="w-full flex flex-row mb-4">
-        <Text content="Informe seu email e CPF para receber seu código de redefinição de senha no email informado." />
+      <div className="mb-5">
+        <Text content="Informe seu número de whatsapp para receber seu código de redefinição de senha. A mensagem somente será enviada caso exista algum usuário com o número informado." />
       </div>
-
-      <div className="w-full flex flex-col mb-4">
-        <TextInput
-          inputLabel="Email"
-          placeholder="Seu email"
-          {...register("email")}
-        />
-        {errors.email && <ErrorMessage errorMessage={errors.email.message} />}
-      </div>
-      <div className="w-full flex flex-col mb-4">
+      <div className="mb-6">
         <MaskedTextInput
-          mask={cpfMask}
-          inputLabel="CPF"
-          placeholder="Seu CPF"
+          mask={phoneMask}
+          inputLabel="Telefone"
+          placeholder="(31) 99999-9999"
+          autoComplete="tel"
           inputMode="numeric"
-          {...register("cpf")}
+          {...register("phone")}
         />
-        {errors.cpf && <ErrorMessage errorMessage={errors.cpf.message} />}
+        {errors.phone && <ErrorMessage errorMessage={errors.phone.message} />}
       </div>
-      <div className="w-full mt-2">
-        <Button
-          onClick={() => {}}
-          title="Receber Código"
-          disabled={!cpfValue || !emailValue}
-        />
-      </div>
+      <Button
+        type="submit"
+        title="Receber código"
+        className="h-[48px] w-full rounded-lg bg-primary text-base font-semibold text-gray-50 hover:bg-primary-dark"
+        disabled={!isValid}
+      />
     </form>
   );
 }

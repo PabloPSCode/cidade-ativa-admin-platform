@@ -1,4 +1,4 @@
-import logo_text from "@/assets/logo_text.svg";
+import logo from "@/assets/logo.png";
 import { CompanyFooterLink } from "@/components/miscellaneous/CompanyFooterLink";
 import { Subtitle } from "@/components/typography/Subtitle";
 import { Title } from "@/components/typography/Title";
@@ -149,8 +149,8 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
         <nav className="hidden xl:flex flex-col w-[320px] min-h-screen overflow-auto p-8 bg-white dark:bg-slate-900 items-start">
           <Link to="/dashboard">
             <img
-              src={logo_text}
-              alt="logo-text"
+              src={logo}
+              alt="logo"
               width={240}
               height={120}
               className="mb-8"
@@ -252,8 +252,8 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
           <div className="mt-[96px]">{children}</div>
           <footer className="flex bg-gray-100 dark:bg-slate-800 items-center justify-center md:p-8 px-2 my-8 mx-auto">
             <CompanyFooterLink
-              companyText="Desenvolvido por PS Code. Acesse nosso site "
-              companyLink="https://www.pablosilvadev.com.br"
+              companyText="Desenvolvido por PLS Sistemas "
+              companyLink="https://www.plssistemas.com.br"
             />
           </footer>
         </div>
@@ -306,8 +306,8 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
           </div>
           <Link to="/dashboard">
             <img
-              src={logo_text}
-              alt="logo-text"
+              src={logo}
+              alt="logo"
               width={240}
               height={120}
               className="mb-4 mt-8"

@@ -7,8 +7,8 @@ export function UpdatePassword() {
   const [password, setPassword] = useState("");
 
   return (
-    <div className="flex flex-col lg:mt-[8vh] mt-[4vh]">
-      <div className="flex flex-row mb-2 w-full sm:w-[400px] ml-8 sm:mx-auto">
+    <div className="flex w-full max-w-[640px] flex-col">
+      <div className="mb-5">
         <HeaderNavigation screenTitle="Redefinição de senha" />
       </div>
       <UpdatePasswordForm

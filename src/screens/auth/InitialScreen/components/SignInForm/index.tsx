@@ -9,10 +9,12 @@ import { LinkButton } from "@/components/buttons/LinkButton";
 import { ErrorMessage } from "@/components/inputs/ErrorMessage";
 import { PasswordTextInput } from "@/components/inputs/PasswordInput";
 import { TextInput } from "@/components/inputs/TextInput";
+import { Subtitle } from "@/components/typography/Subtitle";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { Link } from "react-router-dom";
 import * as yup from "yup";
+
 export interface SignInFormInputs {
   email: string;
   password: string;
@@ -40,7 +42,7 @@ export function SignInForm({ onSubmit }: SignInFormProps) {
     formState: { errors, isValid },
   } = useForm({
     resolver: yupResolver(validationSchema),
-    mode: "onBlur",
+    mode: "onChange",
   });
 
   const handleSubmitForm: SubmitHandler<SignInFormInputs> = (data) => {
@@ -49,33 +51,43 @@ export function SignInForm({ onSubmit }: SignInFormProps) {
 
   return (
     <form
-      className="max-w-lg bg-gray-50 dark:bg-slate-800  p-6 shadow-xl rounded-lg mx-auto w-[90%] lg:w-[400px]"
+      className="w-full rounded-2xl border border-[#e8e8e8] bg-white p-8 shadow-md mb-4"
       onSubmit={handleSubmit(handleSubmitForm)}
     >
-      <TextInput
-        inputLabel="Email"
-        placeholder="Seu email"
-        {...register("email")}
+      <Subtitle
+        content="Fazer login"
+        className="mb-6 text-center text-[15px] font-bold text-black font-secondary"
       />
-      {errors.email && <ErrorMessage errorMessage={errors.email.message} />}
-      <PasswordTextInput
-        inputLabel="Senha"
-        placeholder="Sua senha de pelo menos 8 dígitos"
-        {...register("password")}
-      />
-      {errors.password && (
-        <ErrorMessage errorMessage={errors.password.message} />
-      )}
-      <div className="flex w-full my-6">
-        <Link to="/recuperar-senha">
-          <LinkButton title="Esqueci minha senha" />
-        </Link>
+      <div className="mb-3">
+        <TextInput
+          inputLabel="Email"
+          placeholder="johndoe@gmail.com"
+          autoComplete="email"
+          {...register("email")}
+        />
+        {errors.email && <ErrorMessage errorMessage={errors.email.message} />}
       </div>
-      <Button title="Acessar a plataforma" type="submit" disabled={!isValid} />
-      <div className="flex flex-row w-full mt-6 justify-between items-center">
-        <span className="text-gray-700 dark:text-gray-100 text-sm">
-          Não tem uma conta?
-        </span>
+      <div className="mb-6">
+        <PasswordTextInput
+          inputLabel="Senha"
+          placeholder="Mínimo de 6 dígitos"
+          autoComplete="current-password"
+          {...register("password")}
+        />
+        {errors.password && (
+          <ErrorMessage errorMessage={errors.password.message} />
+        )}
+      </div>
+      <Button
+        title="Fazer login"
+        type="submit"
+        className="h-[48px] w-full rounded-lg bg-primary text-base font-semibold text-gray-50 hover:bg-primary-dark"
+        disabled={!isValid}
+      />
+      <div className="mt-5 flex w-full flex-row items-center justify-between">
+        <Link to="/recuperar-senha">
+          <LinkButton title="Recuperar senha" />
+        </Link>
         <Link to="/cadastro">
           <LinkButton title="Criar minha conta" />
         </Link>

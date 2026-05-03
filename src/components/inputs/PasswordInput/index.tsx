@@ -1,6 +1,6 @@
 import { forwardRef, InputHTMLAttributes, useState } from "react";
 import { FiEye, FiEyeOff } from "react-icons/fi";
-import "../../../styles/globals.css"
+import "../../../styles/globals.css";
 
 interface PasswordTextInputProps extends InputHTMLAttributes<HTMLInputElement> {
   inputLabel: string;
@@ -17,20 +17,20 @@ export const PasswordTextInput = forwardRef<
   };
 
   return (
-    <div className="mb-2 w-full bg-yan-400">
-      <span className="text-gray-800 dark:text-gray-200 text-[12px] lg:text-sm">
+    <div className="mb-1.5 w-full">
+      <span className="text-[12px] font-semibold text-[#4e4e4e]">
         {inputLabel}
       </span>
-      <div className="flex flex-row w-full h-[52px] border-2 rounded-lg z-10 bg-white dark:bg-slate-700   focus-within:border-blue-700">
+      <div className="mt-1 flex h-[40px] w-full flex-row overflow-hidden rounded border border-[#cfcfcf] bg-[#f0f0f0] focus-within:border-[#b8b8b8]">
         <input
-          className="w-[95%] h-[48px] p-4 rounded-bl-md rounded-tl-md text-gray-700 dark:text-gray-100 outline-none bg-white dark:bg-slate-700 placeholder-custom"
+          className="placeholder-custom h-full w-[calc(100%-40px)] bg-transparent px-3 text-[13px] text-[#535353] outline-none"
           type={isPasswordVisible ? "text" : "password"}
           ref={ref}
           {...rest}
         />
         <button
           onClick={handleTogglePasswordVisibility}
-          className="w-[48px]  h-[48px] flex items-center justify-center border-none outline-none bg-white dark:bg-slate-700 overflow:hidden rounded-md"
+          className="flex h-full w-[40px] items-center justify-center border-none bg-transparent outline-none"
           type="button"
         >
           {isPasswordVisible ? (
