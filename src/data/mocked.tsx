@@ -1,85 +1,5 @@
 const menuItems = [
   {
-    title: "Usuários",
-    actions: [
-      {
-        title: "Cadastrar usuário",
-        link: "cadastrar-usuario",
-      },
-      {
-        title: "Gerenciar usuários",
-        link: "gerenciar-usuarios",
-      },
-    ],
-    icon: "users",
-  },
-  {
-    title: "Cursos",
-    actions: [
-      {
-        title: "Cadastrar curso",
-        link: "cadastrar-curso",
-      },
-      {
-        title: "Gerenciar cursos",
-        link: "gerenciar-cursos",
-      },
-    ],
-    icon: "book-open",
-  },
-  {
-    title: "Módulos",
-    actions: [
-      {
-        title: "Cadastrar módulo",
-        link: "cadastrar-modulo",
-      },
-      {
-        title: "Gerenciar módulos",
-        link: "gerenciar-modulos",
-      },
-    ],
-    icon: "book",
-  },
-  {
-    title: "Tutores",
-    actions: [
-      {
-        title: "Cadastrar tutor",
-        link: "cadastrar-tutor",
-      },
-      {
-        title: "Gerenciar tutores",
-        link: "gerenciar-tutores",
-      },
-    ],
-    icon: "user-check",
-  },
-  {
-    title: "Videoaulas",
-    actions: [
-      {
-        title: "Cadastrar videoaula",
-        link: "cadastrar-videoaula",
-      },
-      {
-        title: "Gerenciar videoaulas",
-        link: "gerenciar-videoaulas",
-      },
-    ],
-    icon: "play-circle",
-  },
-  {
-    title: "Certificados",
-    actions: [
-      {
-        title: "Consultar certificados",
-        link: "consultar-certificados",
-      },
-    ],
-    icon: "star",
-  },
-  {
     title: "Solicitações",
     actions: [
       {
@@ -89,12 +9,22 @@ const menuItems = [
     ],
     icon: "map-pin",
   },
+    {
+    title: "Cidadão Legal",
+    actions: [
+      {
+        title: "Consultar ranking",
+        link: "ranking-cidadao-legal",
+      },
+    ],
+    icon: "user-check",
+  },
   {
     title: "Outras ações",
     actions: [
       {
-        title: "Acompanhar progresso do usuário",
-        link: "acompanhar-progresso-do-usuario",
+        title: "Ação 1",
+        link: "action",
       }
     ],
     icon: "plus-circle",

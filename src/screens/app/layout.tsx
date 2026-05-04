@@ -1,4 +1,5 @@
 import logo from "@/assets/logo.png";
+import logoDark from "@/assets/logo_dark.png";
 import { CompanyFooterLink } from "@/components/miscellaneous/CompanyFooterLink";
 import { Subtitle } from "@/components/typography/Subtitle";
 import { Title } from "@/components/typography/Title";
@@ -149,11 +150,11 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
         <nav className="hidden xl:flex flex-col w-[320px] min-h-screen overflow-auto p-8 bg-white dark:bg-slate-900 items-start">
           <Link to="/dashboard">
             <img
-              src={logo}
+              src={theme === 'dark' ? logoDark : logo}
               alt="logo"
               width={240}
               height={120}
-              className="mb-8"
+              className="mb-8 w-40 h-auto mx-auto flex-1"
             />
           </Link>
           {menuItems.map((item, idx) => (
