@@ -3,11 +3,12 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { NotFound } from "@/screens/404";
 import { ConsultCertificates } from "@/screens/app/ConsultCertificates";
 import { FollowUserProgress } from "@/screens/app/FollowUserProgress";
+import { GeneralSolicitations } from "@/screens/app/GeneralSolicitations";
 import { Home } from "@/screens/app/Home";
 import { DashboardLayout } from "@/screens/app/layout";
 import { ManageClasses } from "@/screens/app/ManageClasses";
 import { ManageCourses } from "@/screens/app/ManageCourses";
-import { ManageModules } from "@/screens/app/ManageModules";
+import { ManageSolicitations } from "@/screens/app/ManageSolicitations";
 import { ManageTutors } from "@/screens/app/ManageTutors";
 import { ManageUsers } from "@/screens/app/ManageUsers";
 import { RegisterClass } from "@/screens/app/RegisterClass";
@@ -57,8 +58,8 @@ const appRoutesBase: route[] = [
     element: <RegisterModule />,
   },
   {
-    path: "/dashboard/gerenciar-modulos",
-    element: <ManageModules />,
+    path: "/dashboard/gerenciar-solicitacoes/:id",
+    element: <ManageSolicitations />,
   },
   {
     path: "/dashboard/cadastrar-tutor",
@@ -83,6 +84,10 @@ const appRoutesBase: route[] = [
   {
     path: "/dashboard/acompanhar-progresso-do-usuario",
     element: <FollowUserProgress />,
+  },
+  {
+    path: "/dashboard/solicitacoes",
+    element: <GeneralSolicitations />,
   },
 ];
 

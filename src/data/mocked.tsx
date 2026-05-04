@@ -80,6 +80,16 @@ const menuItems = [
     icon: "star",
   },
   {
+    title: "Solicitações",
+    actions: [
+      {
+        title: "Solicitações gerais",
+        link: "solicitacoes",
+      },
+    ],
+    icon: "map-pin",
+  },
+  {
     title: "Outras ações",
     actions: [
       {
