@@ -1,37 +1,27 @@
 import GreetUser from "@/components/miscellaneous/GreetUser";
 import { Title } from "@/components/typography/Title";
-import { dashboardMetrics } from "@/data/mocked";
 import Feather from "feather-icons-react";
-import MetricsCard from "./components/MetricsCard";
+import GeneralPanel from "../GeneralSolicitations/components/GeneralPanel";
 
 export function Home() {
   return (
-    <main className="w-full flex flex-1  flex-col p-4">
-      <div className=" w-full flex flex-col md:ml-4 ">
-        <div className="flex flex-col justify-between mb-6 mx-auto md:mx-[120px] w-[80%]">
+    <main className="min-h-screen w-full bg-gray-100 dark:bg-slate-800">
+      <div className="mx-auto flex w-full max-w-[1200px] flex-col gap-8 px-4 py-4 sm:px-6 lg:px-8 lg:py-6">
+        <header className="flex flex-col gap-4">
           <GreetUser userName="John Doe" />
-          <div className="flex w-full">
+          <div className="flex items-center gap-2">
             <Feather
               icon="bar-chart-2"
-              className="w-10 h-10 mr-2 text-black dark:text-white"
+              className="h-8 w-8 text-black dark:text-white"
             />
             <Title
               content="Visão geral da sua plataforma"
-              className="m-2 text-black dark:text-white text-lg md:text-xl font-bold font-secondary"
+              className="text-black dark:text-white text-lg md:text-xl font-bold font-secondary"
             />
           </div>
-        </div>
-        <div className="flex flex-row  w-full justify-center flex-wrap">
-          {dashboardMetrics.map((metric) => (
-            <MetricsCard
-              key={metric.title}
-              title={metric.title}
-              iconName={metric.iconName}
-              metric={metric.metric}
-              link={metric.link}
-            />
-          ))}
-        </div>
+        </header>
+
+        <GeneralPanel />
       </div>
     </main>
   );

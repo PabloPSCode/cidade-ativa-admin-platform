@@ -8,31 +8,60 @@ import {
 } from "@/data/mockedSolicitations";
 import type { SolicitationStatus } from "@/interfaces/dtos/Solicitation";
 import { useEffect, useMemo, useState } from "react";
-import {
-  PiBuildings,
-  PiChartBar,
-  PiCheckCircle,
-  PiClockCountdown,
-} from "react-icons/pi";
+import { useSearchParams } from "react-router-dom";
 import FilterSearchCard from "./components/FilterSearchCard";
 import SolicitationCard from "./components/SolicitationCard";
 
 const ITEMS_PER_PAGE = 5;
 const PAGES_TO_SHOW = 4;
 
-const formatCountLabel = (value: number, singular: string, plural: string) =>
-  `${value} ${value === 1 ? singular : plural}`;
+const VALID_STATUSES: SolicitationStatus[] = [
+  "not_resolved",
+  "in_progress",
+  "resolved",
+  "disregarded",
+];
+
+const parseStatusParam = (
+  value: string | null
+): SolicitationStatus | "all" => {
+  if (value && (VALID_STATUSES as string[]).includes(value)) {
+    return value as SolicitationStatus;
+  }
+  return "all";
+};
 
 export function GeneralSolicitations() {
+  const [searchParams, setSearchParams] = useSearchParams();
+
   const [search, setSearch] = useState("");
   const [selectedNeighborhood, setSelectedNeighborhood] = useState("all");
   const [selectedStatus, setSelectedStatus] = useState<
     SolicitationStatus | "all"
-  >("all");
+  >(() => parseStatusParam(searchParams.get("status")));
   const [selectedRequestingUserId, setSelectedRequestingUserId] =
     useState("all");
   const [dateOrder, setDateOrder] = useState<"recent" | "oldest">("recent");
   const [page, setPage] = useState(1);
+
+  useEffect(() => {
+    setSelectedStatus(parseStatusParam(searchParams.get("status")));
+  }, [searchParams]);
+
+  const handleStatusChange = (value: SolicitationStatus | "all") => {
+    setSelectedStatus(value);
+    setSearchParams(
+      (prev) => {
+        if (value === "all") {
+          prev.delete("status");
+        } else {
+          prev.set("status", value);
+        }
+        return prev;
+      },
+      { replace: true }
+    );
+  };
 
   useEffect(() => {
     setPage(1);
@@ -108,7 +137,7 @@ export function GeneralSolicitations() {
   const handleResetFilters = () => {
     setSearch("");
     setSelectedNeighborhood("all");
-    setSelectedStatus("all");
+    handleStatusChange("all");
     setSelectedRequestingUserId("all");
     setDateOrder("recent");
   };
@@ -136,118 +165,7 @@ export function GeneralSolicitations() {
   return (
     <main className="min-h-screen bg-gray-100 dark:bg-slate-800 text-slate-800 dark:text-gray-100">
       <div className="mx-auto flex w-full max-w-[1200px] flex-col items-stretch gap-10 px-4 py-8 sm:px-6 lg:px-8 lg:py-10">
-        <section className="flex flex-col gap-6 rounded-[2rem] border border-gray-200 dark:border-slate-600 bg-white/70 dark:bg-slate-700/80 p-5 shadow-[0_32px_80px_-52px_rgba(15,23,42,0.45)] backdrop-blur-sm sm:p-7">
-          <div className="flex flex-col gap-5 lg:flex-row lg:items-start lg:justify-between">
-            <div className="space-y-3">
-              <div className="inline-flex items-center gap-3 rounded-full bg-gray-50 dark:bg-slate-800 px-4 py-2 text-sm font-semibold text-slate-700 dark:text-gray-200 shadow-sm">
-                <PiBuildings size={22} />
-                <span>Solicitações gerais</span>
-              </div>
-
-              <div className="space-y-2">
-                <h1 className="text-3xl font-black tracking-tight text-slate-800 dark:text-gray-100 sm:text-4xl font-secondary">
-                  Painel administrativo de solicitações urbanas
-                </h1>
-                <p className="max-w-3xl text-sm leading-6 text-slate-600 dark:text-gray-300 sm:text-base">
-                  Consulte situações reportadas pela comunidade, filtre por
-                  bairro, status e requerente, e acompanhe a data de cadastro
-                  das ocorrências.
-                </p>
-              </div>
-
-              <p className="text-sm font-medium text-slate-600 dark:text-gray-300 sm:text-base">
-                Atualmente existem{" "}
-                <span className="font-bold text-slate-800 dark:text-gray-100">
-                  {solicitationStats.total} solicitações cadastradas
-                </span>
-                .
-              </p>
-            </div>
-          </div>
-
-          <div className="grid gap-4 xl:grid-cols-4">
-            <article className="rounded-[1.75rem] border border-gray-200 dark:border-slate-600 bg-white dark:bg-slate-700 p-5 shadow-sm">
-              <div className="flex items-center gap-3">
-                <div className="rounded-2xl bg-gray-100 dark:bg-white/5 p-3 text-slate-700 dark:text-gray-200">
-                  <PiChartBar size={22} />
-                </div>
-                <div className="space-y-1">
-                  <p className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-500 dark:text-gray-400">
-                    Total
-                  </p>
-                  <p className="text-2xl font-black text-slate-800 dark:text-gray-100">
-                    {solicitationStats.total}
-                  </p>
-                </div>
-              </div>
-              <p className="mt-4 text-sm text-slate-600 dark:text-gray-300">
-                {formatCountLabel(
-                  solicitationStats.total,
-                  "registro",
-                  "registros"
-                )}{" "}
-                da comunidade nesta listagem mockada.
-              </p>
-            </article>
-
-            <article className="rounded-[1.75rem] border border-amber-500/20 bg-white dark:bg-slate-700 p-5 shadow-sm">
-              <div className="flex items-center gap-3">
-                <div className="rounded-2xl bg-amber-500/15 p-3 text-amber-600 dark:text-amber-300">
-                  <PiClockCountdown size={22} />
-                </div>
-                <div className="space-y-1">
-                  <p className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-500 dark:text-gray-400">
-                    Pendentes
-                  </p>
-                  <p className="text-2xl font-black text-slate-800 dark:text-gray-100">
-                    {solicitationStats.pending}
-                  </p>
-                </div>
-              </div>
-              <p className="mt-4 text-sm text-slate-600 dark:text-gray-300">
-                Casos que ainda aguardam uma resposta definitiva.
-              </p>
-            </article>
-
-            <article className="rounded-[1.75rem] border border-sky-500/20 bg-white dark:bg-slate-700 p-5 shadow-sm">
-              <div className="flex items-center gap-3">
-                <div className="rounded-2xl bg-sky-500/15 p-3 text-sky-600 dark:text-sky-300">
-                  <PiBuildings size={22} />
-                </div>
-                <div className="space-y-1">
-                  <p className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-500 dark:text-gray-400">
-                    Em andamento
-                  </p>
-                  <p className="text-2xl font-black text-slate-800 dark:text-gray-100">
-                    {solicitationStats.inProgress}
-                  </p>
-                </div>
-              </div>
-              <p className="mt-4 text-sm text-slate-600 dark:text-gray-300">
-                Demandas acompanhadas pelos setores responsáveis.
-              </p>
-            </article>
-
-            <article className="rounded-[1.75rem] border border-emerald-500/20 bg-white dark:bg-slate-700 p-5 shadow-sm">
-              <div className="flex items-center gap-3">
-                <div className="rounded-2xl bg-emerald-500/15 p-3 text-emerald-600 dark:text-emerald-300">
-                  <PiCheckCircle size={22} />
-                </div>
-                <div className="space-y-1">
-                  <p className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-500 dark:text-gray-400">
-                    Resolvidas
-                  </p>
-                  <p className="text-2xl font-black text-slate-800 dark:text-gray-100">
-                    {solicitationStats.resolved}
-                  </p>
-                </div>
-              </div>
-              <p className="mt-4 text-sm text-slate-600 dark:text-gray-300">
-                Solicitações marcadas como concluídas no fluxo atual.
-              </p>
-            </article>
-          </div>
-        </section>
+   
 
         <FilterSearchCard
           search={search}
@@ -258,7 +176,7 @@ export function GeneralSolicitations() {
           status={selectedStatus}
           statuses={statusOptions}
           onStatusChange={(value) =>
-            setSelectedStatus(value as SolicitationStatus | "all")
+            handleStatusChange(value as SolicitationStatus | "all")
           }
           requestingUserId={selectedRequestingUserId}
           requestingUsers={requestingUserOptions}
