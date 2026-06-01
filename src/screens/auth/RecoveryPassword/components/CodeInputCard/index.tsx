@@ -21,7 +21,7 @@ export default function CodeInputCard({
   onValidateCode,
 }: CodeInputCardProps) {
   return (
-    <div className="w-full rounded-2xl border border-[#e8e8e8] bg-white p-8 shadow-md">
+    <div className="w-full rounded-md border border-[#e8e8e8] bg-white p-8 shadow-md">
       <div className="mb-5">
         <Text
           content={`Informe o código numérico de 6 dígitos que enviamos para ${phone}`}
@@ -37,7 +37,7 @@ export default function CodeInputCard({
           classNames={{
             container: "gap-2",
             character:
-              "flex items-center justify-center rounded-lg border border-[#cfcfcf] bg-white text-xl text-gray-700",
+              "flex items-center justify-center rounded-md border border-[#cfcfcf] bg-white text-xl text-gray-700",
             characterInactive: "bg-white",
             characterSelected: "border-primary bg-white text-gray-700",
             characterFilled: "bg-white",
@@ -53,7 +53,7 @@ export default function CodeInputCard({
         type="button"
         title="Validar código"
         onClick={onValidateCode}
-        className="h-[48px] w-full rounded-lg bg-primary text-base font-semibold text-gray-50 hover:bg-primary-dark"
+        className="h-[48px] w-full rounded-md bg-primary text-base font-semibold text-gray-50 hover:bg-primary-dark"
         disabled={code.length !== DEFAULT_CODE_LENGTH}
       />
     </div>

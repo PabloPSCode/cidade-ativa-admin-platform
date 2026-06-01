@@ -165,7 +165,7 @@ export function GeneralSolicitations() {
   return (
     <main className="min-h-screen bg-gray-100 dark:bg-slate-800 text-slate-800 dark:text-gray-100">
       <div className="mx-auto flex w-full max-w-[1200px] flex-col items-stretch gap-10 px-4 py-8 sm:px-6 lg:px-8 lg:py-10">
-   
+
 
         <FilterSearchCard
           search={search}
@@ -225,7 +225,7 @@ export function GeneralSolicitations() {
                     type="button"
                     onClick={() => setPage(Math.max(1, safePage - 1))}
                     disabled={safePage === 1}
-                    className="min-w-[9rem] rounded-2xl border border-gray-200 dark:border-slate-600 px-6 py-3 text-sm font-semibold text-slate-700 dark:text-gray-200 transition hover:border-slate-300 dark:hover:border-slate-500 hover:bg-gray-50 dark:hover:bg-white/5 disabled:cursor-not-allowed disabled:opacity-50"
+                    className="min-w-[9rem] rounded-md border border-gray-200 dark:border-slate-600 px-6 py-3 text-sm font-semibold text-slate-700 dark:text-gray-200 transition hover:border-slate-300 dark:hover:border-slate-500 hover:bg-gray-50 dark:hover:bg-white/5 disabled:cursor-not-allowed disabled:opacity-50"
                   >
                     Anterior
                   </button>
@@ -238,11 +238,10 @@ export function GeneralSolicitations() {
                           key={pageNumber}
                           type="button"
                           onClick={() => setPage(pageNumber)}
-                          className={`h-10 w-10 rounded-full text-sm font-semibold transition ${
-                            isActive
-                              ? "border border-slate-200 bg-slate-800 text-white dark:border-slate-500 dark:bg-gray-100 dark:text-slate-800"
-                              : "border border-transparent text-slate-600 dark:text-gray-300 hover:border-gray-200 hover:bg-gray-50 dark:hover:border-slate-500 dark:hover:bg-white/5"
-                          }`}
+                          className={`h-10 w-10 rounded-md text-sm font-semibold transition ${isActive
+                            ? "border border-slate-200 bg-slate-800 text-white dark:border-slate-500 dark:bg-gray-100 dark:text-slate-800"
+                            : "border border-transparent text-slate-600 dark:text-gray-300 hover:border-gray-200 hover:bg-gray-50 dark:hover:border-slate-500 dark:hover:bg-white/5"
+                            }`}
                         >
                           {pageNumber}
                         </button>
@@ -254,7 +253,7 @@ export function GeneralSolicitations() {
                     type="button"
                     onClick={() => setPage(Math.min(totalPages, safePage + 1))}
                     disabled={safePage === totalPages}
-                    className="min-w-[9rem] rounded-2xl border border-gray-200 dark:border-slate-600 px-6 py-3 text-sm font-semibold text-slate-700 dark:text-gray-200 transition hover:border-slate-300 dark:hover:border-slate-500 hover:bg-gray-50 dark:hover:bg-white/5 disabled:cursor-not-allowed disabled:opacity-50"
+                    className="min-w-[9rem] rounded-md border border-gray-200 dark:border-slate-600 px-6 py-3 text-sm font-semibold text-slate-700 dark:text-gray-200 transition hover:border-slate-300 dark:hover:border-slate-500 hover:bg-gray-50 dark:hover:bg-white/5 disabled:cursor-not-allowed disabled:opacity-50"
                   >
                     Próximo
                   </button>
@@ -262,7 +261,7 @@ export function GeneralSolicitations() {
               ) : null}
             </>
           ) : (
-            <div className="rounded-[2rem] border border-dashed border-gray-300 dark:border-slate-600 bg-white dark:bg-slate-700 p-10 text-center shadow-sm">
+            <div className="rounded-md border border-dashed border-gray-300 dark:border-slate-600 bg-white dark:bg-slate-700 p-10 text-center shadow-sm">
               <h3 className="text-lg font-bold text-slate-800 dark:text-gray-100">
                 Nenhum resultado encontrado
               </h3>
@@ -273,7 +272,7 @@ export function GeneralSolicitations() {
               <button
                 type="button"
                 onClick={handleResetFilters}
-                className="mx-auto mt-6 rounded-2xl bg-emerald-600 px-5 py-3 text-sm font-semibold text-white transition hover:bg-emerald-500"
+                className="mx-auto mt-6 rounded-md bg-emerald-600 px-5 py-3 text-sm font-semibold text-white transition hover:bg-emerald-500"
               >
                 Limpar filtros
               </button>

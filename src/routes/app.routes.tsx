@@ -1,8 +1,10 @@
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 
 import { NotFound } from "@/screens/404";
+import { Actions } from "@/screens/app/Actions";
 import { GeneralSolicitations } from "@/screens/app/GeneralSolicitations";
 import { Home } from "@/screens/app/Home";
+import { LegalCitizenRanking } from "@/screens/app/LegalCitizenRanking";
 import { DashboardLayout } from "@/screens/app/layout";
 
 import { ManageSolicitations } from "@/screens/app/ManageSolicitations";
@@ -34,6 +36,14 @@ const appRoutesBase: route[] = [
   {
     path: "/dashboard/solicitacoes",
     element: <GeneralSolicitations />,
+  },
+  {
+    path: "/dashboard/cidadao-legal",
+    element: <LegalCitizenRanking />,
+  },
+  {
+    path: "/dashboard/cidadao-legal/:citizenId/acoes",
+    element: <Actions />,
   },
 ];
 

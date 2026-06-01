@@ -5,7 +5,7 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 }
 
 const BASE_CLASSES =
-  "w-full h-[52px] flex items-center justify-center bg-primary normal-case lg:text-base text-sm font-medium font-poppins rounded-lg text-gray-50 font-secondary hover:bg-primary-dark disabled:bg-gray-300 disabled:text-gray-500 disabled:cursor-not-allowed disabled:hover:bg-gray-300";
+  "w-full min-h-[40px] flex items-center justify-center border border-transparent bg-primary normal-case px-4 py-2 text-sm font-medium font-primary text-white rounded-md hover:bg-primary-dark disabled:cursor-not-allowed disabled:border-slate-300 disabled:bg-slate-200 disabled:text-slate-500 dark:disabled:border-slate-700 dark:disabled:bg-slate-800 dark:disabled:text-slate-400";
 
 export function Button({ title, className, ...rest }: ButtonProps) {
   return (

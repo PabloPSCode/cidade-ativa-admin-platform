@@ -2,24 +2,114 @@
 @tailwind components;
 @tailwind utilities;
 
-*{
+@import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap");
+
+* {
   margin: 0;
   padding: 0;
-  box-model: border-box;
+  box-sizing: border-box;
 }
 
 :root {
-  --foreground-rgb: 0, 0, 0;
-  --background-start-rgb: 214, 219, 220;
-  --background-end-rgb: 255, 255, 255;
+  --tesla-blue: #3e6ae1;
+  --tesla-blue-hover: #355bc2;
+  --tesla-radius-sm: 4px;
+  --tesla-surface: #ffffff;
+  --tesla-surface-alt: #f4f4f4;
+  --tesla-text-primary: #171a20;
+  --tesla-text-secondary: #393c41;
+  --tesla-text-muted: #5c5e62;
+  --tesla-border: #d0d1d2;
+  --tesla-placeholder: #8e8e8e;
+  --tesla-font-text: "Montserrat", sans-serif;
+  --tesla-font-display: "Montserrat", sans-serif;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --foreground-rgb: 255, 255, 255;
-    --background-start-rgb: 0, 0, 0;
-    --background-end-rgb: 0, 0, 0;
-  }
+:root.dark {
+  --tesla-surface: #171a20;
+  --tesla-surface-alt: #0f1115;
+  --tesla-text-primary: #f4f4f4;
+  --tesla-text-secondary: #d0d1d2;
+  --tesla-text-muted: #b5b7ba;
+  --tesla-border: #2a2e35;
+  --tesla-placeholder: #8b8f95;
+}
+
+html,
+body,
+#root {
+  min-height: 100%;
+}
+
+body {
+  background: var(--tesla-surface-alt);
+  color: var(--tesla-text-primary);
+  font-family: var(--tesla-font-text);
+  font-weight: 400;
+  line-height: 1.43;
+}
+
+.tesla-theme {
+  font-family: var(--tesla-font-text);
+  color: var(--tesla-text-primary);
+}
+
+.tesla-theme h1,
+.tesla-theme h2,
+.tesla-theme h3,
+.tesla-theme h4,
+.tesla-theme h5,
+.tesla-theme h6 {
+  color: var(--tesla-text-primary);
+  font-family: var(--tesla-font-display);
+  font-weight: 500;
+  letter-spacing: normal;
+}
+
+.tesla-theme button,
+.tesla-theme [role="button"] {
+  border-radius: var(--tesla-radius-sm);
+  box-shadow: none;
+  text-transform: none;
+  transition: background-color 0.33s cubic-bezier(0.5, 0, 0, 0.75),
+    border-color 0.33s cubic-bezier(0.5, 0, 0, 0.75),
+    color 0.33s cubic-bezier(0.5, 0, 0, 0.75);
+}
+
+.tesla-theme [class*="shadow"] {
+  box-shadow: none !important;
+}
+
+.tesla-theme input,
+.tesla-theme select,
+.tesla-theme textarea {
+  min-height: 40px;
+  border: 1px solid var(--tesla-border);
+  border-radius: var(--tesla-radius-sm);
+  background: var(--tesla-surface);
+  color: var(--tesla-text-secondary);
+  font-family: var(--tesla-font-text);
+  font-size: 14px;
+}
+
+.tesla-theme [class*="rounded"],
+.tesla-theme article,
+.tesla-theme [data-card="true"] {
+  border-radius: var(--tesla-radius-sm) !important;
+}
+
+.tesla-theme input::placeholder,
+.tesla-theme textarea::placeholder {
+  color: var(--tesla-placeholder);
+}
+
+.tesla-theme a {
+  color: var(--tesla-text-muted);
+  transition: color 0.33s cubic-bezier(0.5, 0, 0, 0.75);
+}
+
+.tesla-theme a:hover {
+  color: var(--tesla-text-primary);
 }
 
 @layer utilities {
@@ -28,13 +118,13 @@
   }
 }
 
-input{
+input {
   font-size: 14px;
 }
 
 .placeholder-custom::placeholder {
-  color: #bdb9b6;
-  font-size: 13px;
+  color: var(--tesla-placeholder);
+  font-size: 14px;
 }
 
 

@@ -9,15 +9,15 @@ const menuItems = [
     ],
     icon: "map-pin",
   },
-    {
-    title: "Cidadão Legal",
+  {
+    title: "Cidadão legal",
     actions: [
       {
         title: "Consultar ranking",
-        link: "ranking-cidadao-legal",
+        link: "cidadao-legal",
       },
     ],
-    icon: "user-check",
+    icon: "award",
   },
   {
     title: "Outras ações",

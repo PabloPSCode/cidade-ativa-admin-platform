@@ -45,7 +45,7 @@ export default function RecoveryPasswordForm({
 
   return (
     <form
-      className="w-full rounded-2xl border border-[#e8e8e8] bg-white p-8 shadow-md"
+      className="w-full rounded-md border border-[#e8e8e8] bg-white p-8 shadow-md"
       onSubmit={handleSubmit(handleSubmitForm)}
     >
       <div className="mb-5">
@@ -65,7 +65,7 @@ export default function RecoveryPasswordForm({
       <Button
         type="submit"
         title="Receber código"
-        className="h-[48px] w-full rounded-lg bg-primary text-base font-semibold text-gray-50 hover:bg-primary-dark"
+        className="h-[48px] w-full rounded-md bg-primary text-base font-semibold text-gray-50 hover:bg-primary-dark"
         disabled={!isValid}
       />
     </form>

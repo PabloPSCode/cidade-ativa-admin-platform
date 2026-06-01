@@ -31,7 +31,7 @@ export interface FilterSearchCardProps {
 }
 
 const selectClassName =
-  "h-12 w-full rounded-[1.2rem] border border-gray-200 dark:border-slate-600 bg-gray-50 dark:bg-white/[0.03] px-4 text-sm font-semibold text-slate-800 dark:text-gray-100 outline-none transition focus:border-slate-400 dark:focus:border-slate-400";
+  "h-12 w-full rounded-md border border-gray-200 dark:border-slate-600 bg-gray-50 dark:bg-white/[0.03] px-4 text-sm font-semibold text-slate-800 dark:text-gray-100 outline-none transition focus:border-slate-400 dark:focus:border-slate-400";
 
 export default function FilterSearchCard({
   search,
@@ -69,7 +69,7 @@ export default function FilterSearchCard({
       <div className="rounded-[1.85rem] border border-gray-200 dark:border-slate-600 bg-white dark:bg-slate-700 p-4 shadow-[0_28px_64px_-48px_rgba(15,23,42,0.45)] sm:p-5">
         <div className="flex flex-col gap-4 xl:flex-row xl:items-center xl:justify-between">
           <div className="flex items-center gap-3 text-sm font-bold text-slate-800 dark:text-gray-100 sm:text-base">
-            <span className="rounded-2xl bg-gray-50 dark:bg-white/[0.03] p-3 text-slate-700 dark:text-gray-200">
+            <span className="rounded-md bg-gray-50 dark:bg-white/[0.03] p-3 text-slate-700 dark:text-gray-200">
               <PiFunnelSimple size={18} />
             </span>
             <div className="flex flex-wrap items-center gap-2">

@@ -143,8 +143,8 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
   }, [window.location.pathname]);
 
   return (
-    <section className="flex flex-col h-screen overflow-hidden">
-      <LoadingBar ref={ref as never} height={4} color="#0267FF" />
+    <section className="tesla-theme flex h-screen flex-col overflow-hidden bg-slate-100 dark:bg-slate-900">
+      <LoadingBar ref={ref as never} height={4} color="#3E6AE1" />
       <Toaster />
       <div className="flex flex-row w-full min-h-screen">
         <nav className="hidden xl:flex flex-col w-[320px] min-h-screen overflow-auto p-8 bg-white dark:bg-slate-900 items-start">
@@ -197,17 +197,17 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
             </Accordion>
           ))}
         </nav>
-        <div className="flex flex-1 flex-col justify-between pb-0 bg-gray-100 dark:bg-slate-800 h-screen w-full overflow-y-auto">
+        <div className="flex h-screen w-full flex-1 flex-col justify-between overflow-y-auto bg-slate-100 pb-0 dark:bg-slate-900">
           <header
             className={
               !isMobileMenuModalOpen
-                ? "w-full flex flex-row justify-between items-center border-bottom-2 lg:p-4 p-3 fixed bg-gray-50 dark:bg-slate-700 border-b-gray-200 dark:border-b-slate-600 border-b-2 z-50"
-                : "w-full flex flex-row justify-between items-center border-bottom-2 mb-[400px] lg:p-4 p-3 fixed bg-gray-50 dark:bg-slate-700 border-b-gray-200 dark:border-b-slate-600 border-b-2"
+                ? "w-full flex flex-row justify-between items-center border-bottom-2 lg:p-4 p-3 fixed bg-white dark:bg-slate-900 border-b-gray-200 dark:border-b-slate-700 border-b-2 z-50"
+                : "w-full flex flex-row justify-between items-center border-bottom-2 mb-[400px] lg:p-4 p-3 fixed bg-white dark:bg-slate-900 border-b-gray-200 dark:border-b-slate-700 border-b-2"
             }
           >
             <div className="flex flex-row">
               <div className="hidden sm:flex">
-                <Breadcrumbs className="mr-3 bg-gray-100 dark:bg-slate-800">
+                <Breadcrumbs className="mr-3 bg-slate-100 dark:bg-slate-900">
                   <Link to="/dashboard">
                     <span className="text-[11px] lx:text-sm hidden sm:flex dark:text-gray-100 text-slate-800">
                       {breadCrumbBase}
@@ -251,7 +251,7 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
             </div>
           </header>
           <div className="mt-[96px]">{children}</div>
-          <footer className="flex bg-gray-100 dark:bg-slate-800 items-center justify-center md:p-8 px-2 my-8 mx-auto">
+          <footer className="my-8 mx-auto flex items-center justify-center bg-slate-100 px-2 md:p-8 dark:bg-slate-900">
             <CompanyFooterLink
               companyText="Desenvolvido por PLS Sistemas "
               companyLink="https://www.plssistemas.com.br"
@@ -279,13 +279,13 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
         <div className="flex flex-col md:flex-row items-center justify-around w-full md:w-[480px]">
           <button
             onClick={handleToggleLogoutModal}
-            className="text-black dark:text-white bg-gray-200 dark:bg-slate-700 px-4 py-2 rounded-lg text-sm w-[188px]"
+            className="text-black dark:text-white bg-gray-200 dark:bg-slate-700 px-4 py-2 rounded-md text-sm w-[188px]"
           >
             Continuar na plataforma
           </button>
           <button
             onClick={handleSignOut}
-            className="text-white text-sm bg-red-500 px-4 py-2 rounded-lg w-[188px] mt-4 md:mt-0"
+            className="text-white text-sm bg-red-500 px-4 py-2 rounded-md w-[188px] mt-4 md:mt-0"
           >
             Sair da plataforma
           </button>

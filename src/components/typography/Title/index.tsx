@@ -6,7 +6,7 @@ interface TitleProps extends HTMLAttributes<HTMLHeadingElement> {
 export function Title({ content, ...rest }: TitleProps) {
   return (
     <h1
-      className="text-gray-900 dark:text-gray-300 font-bold text-lg md:text-xl"
+      className="font-secondary text-lg font-medium text-secondary dark:text-slate-100 md:text-xl"
       {...rest}
     >
       {content}

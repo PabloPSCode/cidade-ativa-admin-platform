@@ -286,3 +286,6 @@ export const buildSolicitationDetailsHref = (id: string) =>
 
 export const getSolicitationById = (id: string) =>
   mockedSolicitations.find((item) => item.id === id);
+
+export const getSolicitationsByRequester = (requesterName: string) =>
+  mockedSolicitations.filter((item) => item.requestingUserId === requesterName);

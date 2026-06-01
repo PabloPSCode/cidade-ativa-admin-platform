@@ -19,13 +19,13 @@ export function ManageSolicitations() {
     setSolicitation((current) =>
       current
         ? {
-            ...current,
-            status: "resolved",
-            resolvedAt: new Date().toISOString(),
-            resolutionComment:
-              current.resolutionComment ||
-              "Solicitação marcada como resolvida pela equipe administrativa.",
-          }
+          ...current,
+          status: "resolved",
+          resolvedAt: new Date().toISOString(),
+          resolutionComment:
+            current.resolutionComment ||
+            "Solicitação marcada como resolvida pela equipe administrativa.",
+        }
         : current
     );
   };
@@ -61,7 +61,7 @@ export function ManageSolicitations() {
             onMarkAsResolved={handleMarkAsResolved}
           />
         ) : (
-          <div className="rounded-[2rem] border border-dashed border-gray-300 dark:border-slate-600 bg-white dark:bg-slate-700 p-10 text-center shadow-sm">
+          <div className="rounded-md border border-dashed border-gray-300 dark:border-slate-600 bg-white dark:bg-slate-700 p-10 text-center shadow-sm">
             <h3 className="text-lg font-bold text-slate-800 dark:text-gray-100">
               Solicitação não encontrada
             </h3>

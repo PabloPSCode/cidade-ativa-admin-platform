@@ -45,7 +45,7 @@ export function UpdatePasswordForm({
 
   return (
     <form
-      className="w-full rounded-2xl border border-[#e8e8e8] bg-white p-8 shadow-md"
+      className="w-full rounded-md border border-[#e8e8e8] bg-white p-8 shadow-md"
       onSubmit={submit}
     >
       <div className="mb-4 flex w-full flex-row">
@@ -76,7 +76,7 @@ export function UpdatePasswordForm({
       <Button
         type="submit"
         title="Redefinir senha"
-        className="h-[48px] w-full rounded-lg bg-primary text-base font-semibold text-gray-50"
+        className="h-[48px] w-full rounded-md bg-primary text-base font-semibold text-gray-50"
         disabled={!isFormValid}
       />
     </form>

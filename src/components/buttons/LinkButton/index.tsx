@@ -5,7 +5,7 @@ interface LinkButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 }
 
 const BASE_CLASSES =
-  "text-primary dark:text-primary-light normal-case text-sm font-medium font-poppins rounded-lg disabled:text-gray-400 disabled:cursor-not-allowed";
+  "text-tertiary dark:text-slate-300 normal-case text-sm font-normal font-primary rounded-md underline-offset-2 hover:underline disabled:text-slate-400 disabled:cursor-not-allowed";
 
 export function LinkButton({ title, className, ...rest }: LinkButtonProps) {
   return (

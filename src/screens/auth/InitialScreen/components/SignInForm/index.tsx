@@ -51,7 +51,7 @@ export function SignInForm({ onSubmit }: SignInFormProps) {
 
   return (
     <form
-      className="w-full rounded-2xl border border-[#e8e8e8] bg-white p-8 shadow-md mb-4"
+      className="w-full rounded-md border border-[#e8e8e8] bg-white p-8 shadow-md mb-4"
       onSubmit={handleSubmit(handleSubmitForm)}
     >
       <Subtitle
@@ -81,7 +81,7 @@ export function SignInForm({ onSubmit }: SignInFormProps) {
       <Button
         title="Fazer login"
         type="submit"
-        className="h-[48px] w-full rounded-lg bg-primary text-base font-semibold text-gray-50 hover:bg-primary-dark"
+        className="h-[48px] w-full rounded-md bg-primary text-base font-semibold text-gray-50 hover:bg-primary-dark"
         disabled={!isValid}
       />
       <div className="mt-5 flex w-full flex-row items-center justify-between">

@@ -68,11 +68,10 @@ export default function ProductImageVisualizer({
                 loading="lazy"
                 width={88}
                 height={88}
-                className={`h-[88px] w-[88px] object-cover ${
-                  active
+                className={`h-[88px] w-[88px] object-cover ${active
                     ? "border-2 border-primary"
                     : "hover:brightness-90"
-                } ${thumbClassName} ${img.className ?? ""}`}
+                  } ${thumbClassName} ${img.className ?? ""}`}
               />
             </button>
           );
@@ -95,7 +94,7 @@ export default function ProductImageVisualizer({
             type="button"
             onClick={goPrev}
             aria-label="Imagem anterior"
-            className="absolute left-2 top-1/2 z-10 inline-flex -translate-y-1/2 items-center justify-center rounded-full bg-white/80 p-2 text-slate-800 transition hover:bg-white dark:bg-slate-700/80 dark:text-gray-100 dark:hover:bg-slate-700"
+            className="absolute left-2 top-1/2 z-10 inline-flex -translate-y-1/2 items-center justify-center rounded-md bg-white/80 p-2 text-slate-800 transition hover:bg-white dark:bg-slate-700/80 dark:text-gray-100 dark:hover:bg-slate-700"
           >
             <PiArrowLeftBold className="h-5 w-5" />
           </button>
@@ -104,7 +103,7 @@ export default function ProductImageVisualizer({
             type="button"
             onClick={goNext}
             aria-label="Próxima imagem"
-            className="absolute right-2 top-1/2 z-10 inline-flex -translate-y-1/2 items-center justify-center rounded-full bg-white/80 p-2 text-slate-800 transition hover:bg-white dark:bg-slate-700/80 dark:text-gray-100 dark:hover:bg-slate-700"
+            className="absolute right-2 top-1/2 z-10 inline-flex -translate-y-1/2 items-center justify-center rounded-md bg-white/80 p-2 text-slate-800 transition hover:bg-white dark:bg-slate-700/80 dark:text-gray-100 dark:hover:bg-slate-700"
           >
             <PiArrowRightBold className="h-5 w-5" />
           </button>

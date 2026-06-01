@@ -146,7 +146,7 @@ export default function SignUpForm({ onSubmit }: SignUpFormProps) {
 
   return (
     <form
-      className="mx-auto mb-10 w-[95%] rounded-2xl border border-[#e8e8e8] bg-white p-6 shadow-md sm:w-[440px]"
+      className="mx-auto mb-10 w-[95%] rounded-md border border-[#e8e8e8] bg-white p-6 shadow-md sm:w-[440px]"
       onSubmit={handleSubmit(handleSubmitForm)}
     >
       <div className="mb-4">
@@ -247,7 +247,7 @@ export default function SignUpForm({ onSubmit }: SignUpFormProps) {
               type="button"
               title="Próximo"
               onClick={handleAdvanceToStepTwo}
-              className="h-[44px] w-full rounded-lg bg-primary text-base font-medium text-gray-50"
+              className="h-[44px] w-full rounded-md bg-primary text-base font-medium text-gray-50"
               disabled={!isStepOneValid}
             />
           </div>
@@ -291,7 +291,7 @@ export default function SignUpForm({ onSubmit }: SignUpFormProps) {
             <Button
               type="submit"
               title="Cadastrar usuário"
-              className="h-[44px] w-full rounded-lg bg-primary text-base font-medium text-gray-50"
+              className="h-[44px] w-full rounded-md bg-primary text-base font-medium text-gray-50"
               disabled={!isValid || !selectedRole}
             />
           </div>

@@ -50,13 +50,13 @@ export function DeleteModal({
       <div className="flex flex-row items-center justify-around w-full md:w-[400px]">
         <button
           onClick={onClose}
-          className="text-black dark:text-white bg-gray-200 dark:bg-slate-700  px-4 py-2 rounded-lg  text-[13px] md:text-[14px] mr-4"
+          className="text-black dark:text-white bg-gray-200 dark:bg-slate-700  px-4 py-2 rounded-md  text-[13px] md:text-[14px] mr-4"
         >
           Cancelar remoção
         </button>
         <button
           onClick={onConfirmAction}
-          className="text-white  text-[13px] md:text-[14px] bg-red-500 px-4 py-2 rounded-lg"
+          className="text-white  text-[13px] md:text-[14px] bg-red-500 px-4 py-2 rounded-md"
         >
           Confirmar remoção
         </button>

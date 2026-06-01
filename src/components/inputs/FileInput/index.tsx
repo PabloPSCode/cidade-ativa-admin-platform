@@ -28,7 +28,7 @@ export const FileInput = forwardRef<HTMLInputElement, FileInputProps>(
         />
         <button
           type="button"
-          className="w-full h-[52px] flex items-center justify-center bg-gray-300 font-medium rounded-lg border-2 border-black text-black text-[12px] md:text-sm"
+          className="w-full h-[52px] flex items-center justify-center bg-gray-300 font-medium rounded-md border-2 border-black text-black text-[12px] md:text-sm"
         >
           {buttonTitle ? buttonTitle : "Selecione um arquivo"}
         </button>

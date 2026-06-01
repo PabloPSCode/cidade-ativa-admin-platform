@@ -6,7 +6,7 @@ interface TextProps extends HTMLAttributes<HTMLHeadingElement> {
 export function Text({ content, ...rest }: TextProps) {
   return (
     <span
-      className="text-gray-600 dark:text-gray-50 font-regular text-[12px] lg:text-sm"
+      className="font-primary text-[12px] font-normal text-slate-600 dark:text-slate-200 lg:text-sm"
       {...rest}
     >
       {content}

@@ -45,12 +45,12 @@ function DetailsInfoBlock({
 }) {
   return (
     <div
-      className={`rounded-[1.35rem] bg-gray-50 dark:bg-white/[0.03] p-4 ${className}`}
+      className={`rounded-[1.35rem] bg-gray-50 dark:bg-white/[0.03] p-3 ${className}`}
     >
-      <p className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-500 dark:text-gray-400">
+      <p className="text-xs md:text-sm font-semibold uppercase tracking-[0.18em] text-slate-500 dark:text-gray-400">
         {label}
       </p>
-      <div className="mt-2 flex items-start gap-2 text-sm font-semibold text-slate-800 dark:text-gray-100 sm:text-base">
+      <div className="mt-1.5 flex items-start gap-2 text-xs md:text-sm font-semibold text-slate-800 dark:text-gray-100">
         {icon && (
           <span className="mt-0.5 shrink-0 text-slate-500 dark:text-gray-400">
             {icon}
@@ -70,11 +70,11 @@ function DetailsTextSection({
   children: ReactNode;
 }) {
   return (
-    <section className="rounded-[1.6rem] border border-gray-200/70 dark:border-slate-600/70 bg-gray-50/70 dark:bg-white/[0.02] p-5">
-      <h3 className="text-lg font-black tracking-tight text-slate-800 dark:text-gray-100 font-secondary">
+    <section className="rounded-[1.6rem] border border-gray-200/70 dark:border-slate-600/70 bg-gray-50/70 dark:bg-white/[0.02] p-4">
+      <h3 className="text-xs md:text-sm font-black tracking-tight text-slate-800 dark:text-gray-100 font-secondary">
         {title}
       </h3>
-      <div className="mt-3 text-sm leading-7 text-slate-600 dark:text-gray-300 sm:text-base">
+      <div className="mt-2 text-xs md:text-sm leading-6 text-slate-600 dark:text-gray-300">
         {children}
       </div>
     </section>
@@ -89,8 +89,8 @@ function DetailsImageSection({
   images: string[];
 }) {
   return (
-    <section className="rounded-[1.6rem] border border-gray-200/70 dark:border-slate-600/70 bg-gray-50/70 dark:bg-white/[0.02] p-5">
-      <h3 className="text-lg font-black tracking-tight text-slate-800 dark:text-gray-100 font-secondary">
+    <section className="rounded-[1.6rem] border border-gray-200/70 dark:border-slate-600/70 bg-gray-50/70 dark:bg-white/[0.02] p-4">
+      <h3 className="text-xs md:text-sm font-black tracking-tight text-slate-800 dark:text-gray-100 font-secondary">
         {title}
       </h3>
 
@@ -100,12 +100,12 @@ function DetailsImageSection({
             src,
             alt: `${title} ${index + 1}`,
           }))}
-          className="mt-4 rounded-[1.2rem] !bg-transparent"
-          mainImageClassName="rounded-[1.2rem]"
+          className="mt-3 rounded-md !bg-transparent"
+          mainImageClassName="rounded-md"
           thumbClassName="rounded-xl"
         />
       ) : (
-        <div className="mt-4 rounded-[1.2rem] border border-dashed border-gray-300 dark:border-slate-600 bg-white dark:bg-slate-700 p-8 text-sm text-slate-500 dark:text-gray-400">
+        <div className="mt-3 rounded-md border border-dashed border-gray-300 dark:border-slate-600 bg-white dark:bg-slate-700 p-4 text-xs md:text-sm text-slate-500 dark:text-gray-400">
           Nenhuma imagem complementar foi adicionada até o momento.
         </div>
       )}
@@ -149,7 +149,7 @@ export default function SolicitationCardDetails({
 
   return (
     <article
-      className={`rounded-[2rem] border border-gray-200/70 dark:border-slate-600/70 bg-white dark:bg-slate-700 p-5 shadow-[0_32px_80px_-52px_rgba(15,23,42,0.45)] sm:p-6 lg:p-8 ${className}`}
+      className={`rounded-md border border-gray-200/70 dark:border-slate-600/70 bg-white dark:bg-slate-700 p-4 shadow-[0_32px_80px_-52px_rgba(15,23,42,0.45)] ${className}`}
     >
       <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
         <div className="grid flex-1 gap-4 md:grid-cols-2 xl:grid-cols-4">
@@ -159,10 +159,10 @@ export default function SolicitationCardDetails({
             label="Status"
             value={
               <span
-                className={`inline-flex items-center gap-2 rounded-full px-3 py-1 text-xs font-semibold sm:text-sm ${statusConfig.badgeClassName}`}
+                className={`inline-flex items-center gap-2 rounded-md px-3 py-1 text-xs md:text-sm font-semibold ${statusConfig.badgeClassName}`}
               >
                 <span
-                  className={`h-2.5 w-2.5 rounded-full ${statusConfig.dotClassName}`}
+                  className={`h-2.5 w-2.5 rounded-md ${statusConfig.dotClassName}`}
                 />
                 {statusLabel ?? statusConfig.label}
               </span>
@@ -187,7 +187,7 @@ export default function SolicitationCardDetails({
             type="button"
             onClick={onMarkAsResolved}
             disabled={isResolved}
-            className="h-12 shrink-0 rounded-2xl bg-emerald-600 px-5 text-sm font-bold text-white transition hover:bg-emerald-500 disabled:cursor-not-allowed disabled:bg-gray-300 disabled:text-gray-500 lg:self-start"
+            className="h-11 shrink-0 rounded-md bg-emerald-600 px-4 text-xs md:text-sm font-bold text-white transition hover:bg-emerald-500 disabled:cursor-not-allowed disabled:bg-gray-300 disabled:text-gray-500 lg:self-start"
           >
             {isResolved ? "Solicitação resolvida" : resolveButtonLabel}
           </button>
@@ -234,19 +234,19 @@ export default function SolicitationCardDetails({
         />
       </div>
 
-      <div className="mt-6 grid gap-5 xl:grid-cols-3">
-        <section className="rounded-[1.6rem] border border-gray-200/70 dark:border-slate-600/70 bg-gray-50/70 dark:bg-white/[0.02] p-5">
-          <h3 className="text-lg font-black tracking-tight text-slate-800 dark:text-gray-100 font-secondary">
+      <div className="mt-6 grid gap-4 xl:grid-cols-3">
+        <section className="rounded-[1.6rem] border border-gray-200/70 dark:border-slate-600/70 bg-gray-50/70 dark:bg-white/[0.02] p-4">
+          <h3 className="text-xs md:text-sm font-black tracking-tight text-slate-800 dark:text-gray-100 font-secondary">
             {mapSectionTitle}
           </h3>
-          <div className="mt-4 overflow-hidden rounded-[1.2rem] border border-gray-200/70 dark:border-slate-600/70">
+          <div className="mt-3 overflow-hidden rounded-md border border-gray-200/70 dark:border-slate-600/70">
             <iframe
               title={`${mapTitlePrefix} ${protocolNumber}`}
               src={mapSrc}
               className="aspect-[4/3] w-full"
               loading="lazy"
               referrerPolicy="no-referrer-when-downgrade"
-              style={{ minHeight: 300, border: 0 }}
+              style={{ minHeight: 280, border: 0 }}
             />
           </div>
         </section>
