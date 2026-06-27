@@ -17,6 +17,7 @@ import { SelectInput } from "@/components/inputs/SelectInput";
 import { TextInput } from "@/components/inputs/TextInput";
 import { PasswordRequirements } from "@/components/miscellaneous/PasswordRequirements";
 import { StepIndicator } from "@/components/miscellaneous/StepIndicator";
+import { useCities } from "@/hooks/useCities";
 import { birthDateMask, cpfMask, phoneMask } from "@/utils/masks";
 import {
   birthDateValidationRegex,
@@ -43,6 +44,8 @@ const STEP_ONE_FIELDS = [
   "birthDate",
   "cpf",
   "phone",
+  "uf",
+  "cityId",
   "role",
 ] as const;
 
@@ -52,13 +55,17 @@ export interface SignUpFormInputs {
   cpf: string;
   birthDate: string;
   phone: string;
+  uf: string;
+  cityId: string;
+  /** Resolved display name of the selected city; filled on submit. */
+  city?: string;
   role: string;
   password: string;
   passwordConfirmation: string;
 }
 
 interface SignUpFormProps {
-  onSubmit: (data: SignUpFormInputs) => void;
+  onSubmit: (data: SignUpFormInputs) => void | Promise<void>;
 }
 
 export default function SignUpForm({ onSubmit }: SignUpFormProps) {
@@ -80,6 +87,8 @@ export default function SignUpForm({ onSubmit }: SignUpFormProps) {
       .string()
       .matches(phoneValidationRegex, PHONE_INVALID_MESSAGE)
       .required(REQUIRED_FIELD_MESSAGE),
+    uf: yup.string().required(REQUIRED_FIELD_MESSAGE),
+    cityId: yup.string().required(REQUIRED_FIELD_MESSAGE),
     role: yup.string().required(REQUIRED_FIELD_MESSAGE),
     password: yup
       .string()
@@ -105,11 +114,21 @@ export default function SignUpForm({ onSubmit }: SignUpFormProps) {
     setValue,
     trigger,
     watch,
-    formState: { errors, isValid },
+    formState: { errors, isValid, isSubmitting },
   } = useForm<SignUpFormInputs>({
     resolver: yupResolver(validationSchema),
     mode: "onChange",
   });
+
+  const {
+    ufOptions,
+    citiesByUf,
+    cityNameById,
+    isLoading: isLoadingCities,
+  } = useCities();
+  const selectedUf = watch("uf") ?? "";
+  const selectedCityId = watch("cityId") ?? "";
+  const cityOptions = citiesByUf(selectedUf);
 
   const passwordValue = watch("password") ?? "";
   const stepOneValues = watch(STEP_ONE_FIELDS);
@@ -119,8 +138,8 @@ export default function SignUpForm({ onSubmit }: SignUpFormProps) {
   const hasStepOneErrors = STEP_ONE_FIELDS.some((field) => !!errors[field]);
   const isStepOneValid = isStepOneFilled && !hasStepOneErrors;
 
-  const handleSubmitForm: SubmitHandler<SignUpFormInputs> = (data) => {
-    onSubmit(data);
+  const handleSubmitForm: SubmitHandler<SignUpFormInputs> = async (data) => {
+    await onSubmit({ ...data, city: cityNameById(data.cityId) });
   };
 
   const handleRoleSelect = (option: {
@@ -129,6 +148,19 @@ export default function SignUpForm({ onSubmit }: SignUpFormProps) {
   }) => {
     setSelectedRole(String(option.value));
     setValue("role", String(option.value), { shouldValidate: true });
+  };
+
+  const handleUfSelect = (option: { value: string | number; label: string }) => {
+    setValue("uf", String(option.value), { shouldValidate: true });
+    // Reset the dependent city selection when the UF changes.
+    setValue("cityId", "", { shouldValidate: true });
+  };
+
+  const handleCitySelect = (option: {
+    value: string | number;
+    label: string;
+  }) => {
+    setValue("cityId", String(option.value), { shouldValidate: true });
   };
 
   const handleAdvanceToStepTwo = async () => {
@@ -143,6 +175,8 @@ export default function SignUpForm({ onSubmit }: SignUpFormProps) {
   };
 
   const roleRegister = register("role");
+  const ufRegister = register("uf");
+  const cityRegister = register("cityId");
 
   return (
     <form
@@ -223,11 +257,70 @@ export default function SignUpForm({ onSubmit }: SignUpFormProps) {
             </div>
           </div>
 
+          <div className="mb-4 flex w-full flex-row gap-2">
+            <div className="w-full">
+              <SelectInput
+                label="UF"
+                placeholder={
+                  isLoadingCities ? "Carregando..." : "Selecione a UF"
+                }
+                options={ufOptions}
+                value={selectedUf || null}
+                isSearchable
+                isDisabled={isLoadingCities}
+                onSelectOption={handleUfSelect}
+                labelClassName="text-[12px] font-semibold text-[#4e4e4e] mb-1"
+                selectStyle={{
+                  minHeight: "40px",
+                  backgroundColor: "#f0f0f0",
+                  borderColor: "#cfcfcf",
+                  boxShadow: "none",
+                  fontFamily: "Roboto, sans-serif",
+                  color: "#2b2b2b",
+                }}
+              />
+              <input type="hidden" value={selectedUf} {...ufRegister} />
+              {errors.uf && <ErrorMessage errorMessage={errors.uf.message} />}
+            </div>
+            <div className="w-full">
+              <SelectInput
+                label="Cidade"
+                placeholder={
+                  !selectedUf
+                    ? "Selecione a cidade"
+                    : isLoadingCities
+                      ? "Carregando..."
+                      : "Selecione a cidade"
+                }
+                options={cityOptions}
+                value={selectedCityId || null}
+                isSearchable
+                isDisabled={!selectedUf || isLoadingCities}
+                onSelectOption={handleCitySelect}
+                labelClassName="text-[12px] font-semibold text-[#4e4e4e] mb-1"
+                selectStyle={{
+                  minHeight: "40px",
+                  backgroundColor: "#f0f0f0",
+                  borderColor: "#cfcfcf",
+                  boxShadow: "none",
+                  fontFamily: "Roboto, sans-serif",
+                  color: "#2b2b2b",
+                }}
+              />
+              <input type="hidden" value={selectedCityId} {...cityRegister} />
+              {errors.cityId && (
+                <ErrorMessage errorMessage={errors.cityId.message} />
+              )}
+            </div>
+          </div>
+
           <div className="w-full mb-4">
             <SelectInput
               label="Cargo público"
               placeholder="Selecione seu cargo na administração pública"
               options={PUBLIC_ROLE_OPTIONS}
+              value={selectedRole || null}
+              disableSort
               onSelectOption={handleRoleSelect}
               labelClassName="text-[12px] font-semibold text-[#4e4e4e] mb-1"
               selectStyle={{
@@ -236,6 +329,7 @@ export default function SignUpForm({ onSubmit }: SignUpFormProps) {
                 borderColor: "#cfcfcf",
                 boxShadow: "none",
                 fontFamily: "Roboto, sans-serif",
+                color: "#2b2b2b",
               }}
             />
             <input type="hidden" value={selectedRole} {...roleRegister} />
@@ -290,9 +384,9 @@ export default function SignUpForm({ onSubmit }: SignUpFormProps) {
           <div className="w-full mt-1">
             <Button
               type="submit"
-              title="Cadastrar usuário"
+              title={isSubmitting ? "Cadastrando..." : "Cadastrar usuário"}
               className="h-[44px] w-full rounded-md bg-primary text-base font-medium text-gray-50"
-              disabled={!isValid || !selectedRole}
+              disabled={!isValid || !selectedRole || isSubmitting}
             />
           </div>
 

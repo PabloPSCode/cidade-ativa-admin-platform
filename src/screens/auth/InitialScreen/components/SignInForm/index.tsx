@@ -21,7 +21,7 @@ export interface SignInFormInputs {
 }
 
 interface SignInFormProps {
-  onSubmit: (data: SignInFormInputs) => void;
+  onSubmit: (data: SignInFormInputs) => void | Promise<void>;
 }
 
 export function SignInForm({ onSubmit }: SignInFormProps) {
@@ -39,14 +39,14 @@ export function SignInForm({ onSubmit }: SignInFormProps) {
   const {
     register,
     handleSubmit,
-    formState: { errors, isValid },
+    formState: { errors, isValid, isSubmitting },
   } = useForm({
     resolver: yupResolver(validationSchema),
     mode: "onChange",
   });
 
-  const handleSubmitForm: SubmitHandler<SignInFormInputs> = (data) => {
-    onSubmit(data);
+  const handleSubmitForm: SubmitHandler<SignInFormInputs> = async (data) => {
+    await onSubmit(data);
   };
 
   return (
@@ -79,10 +79,10 @@ export function SignInForm({ onSubmit }: SignInFormProps) {
         )}
       </div>
       <Button
-        title="Fazer login"
+        title={isSubmitting ? "Entrando..." : "Fazer login"}
         type="submit"
         className="h-[48px] w-full rounded-md bg-primary text-base font-semibold text-gray-50 hover:bg-primary-dark"
-        disabled={!isValid}
+        disabled={!isValid || isSubmitting}
       />
       <div className="mt-5 flex w-full flex-row items-center justify-between">
         <Link to="/recuperar-senha">

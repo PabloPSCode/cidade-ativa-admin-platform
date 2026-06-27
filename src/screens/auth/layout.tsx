@@ -10,7 +10,7 @@ export const AuthenticationLayout: React.FC<AuthenticationLayoutProps> = ({
     children,
 }: AuthenticationLayoutProps) => {
     return (
-        <div className="tesla-theme flex min-h-screen w-full flex-col bg-slate-100 pb-8 dark:bg-slate-900">
+        <div className="tesla-theme flex h-full w-full flex-col overflow-y-auto bg-slate-100 pb-8 dark:bg-slate-900">
             <Toaster />
             <main className="flex flex-1 items-center justify-center px-4 pt-8">
                 {children}
