@@ -4,9 +4,10 @@ import toast from "react-hot-toast";
  * Extracts a friendly, user-facing message from an error.
  *
  * Errors that reach the UI are normalized by the API response interceptor
- * (see `src/services/api.ts`) into an `Error` whose `message` holds the
- * server's friendly `MSG.message`. This helper surfaces that message and
- * falls back to a contextual default when no server message is available.
+ * (see `src/services/api.ts`) into an `Error` whose `message` already holds a
+ * friendly, user-facing string (derived from the server's `MSG.error`). This
+ * helper surfaces that message and falls back to a contextual default when no
+ * server message is available.
  */
 const getErrorMessage = (error: unknown, fallback: string): string =>
   error instanceof Error && error.message.trim().length > 0

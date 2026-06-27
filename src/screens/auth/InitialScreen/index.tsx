@@ -1,7 +1,7 @@
 import { Title } from "@/components/typography/Title";
 import { authenticate } from "@/services/auth";
 import { getUserByEmail } from "@/services/users";
-import { setAuthToken } from "@/services/api";
+import { clearAuthToken, setAuthToken } from "@/services/api";
 import { useAuthenticationStore } from "@/store/auth";
 import {
   getErrorMessage,
@@ -24,9 +24,21 @@ export function InitialScreen() {
       setAuthToken(token);
       const user = await getUserByEmail(data.email);
 
+      // This platform is restricted to administrators; reject other accounts
+      // and drop the token authorized above so no session lingers.
+      if (!user.isAdmin) {
+        clearAuthToken();
+        showAlertError(
+          "Acesso restrito: esta área é exclusiva para administradores.",
+        );
+        return;
+      }
+
       signIn(token, user);
       showAlertSuccess(`Bem-vindo(a), ${user.name}!`);
     } catch (error) {
+      // Discard any token set before the failure so retries start clean.
+      clearAuthToken();
       showAlertError(getErrorMessage(error, "Não foi possível entrar."));
     }
   };

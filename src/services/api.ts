@@ -38,6 +38,53 @@ export function getAuthToken(): string | null {
   return authToken;
 }
 
+/**
+ * Friendly, user-facing replacements for technical/internal error strings.
+ *
+ * The back-end already returns friendly Portuguese messages for domain errors
+ * in `MSG.error` (e.g. "E-mail ou senha incorretos."), so those pass through
+ * untouched. Only the generic/internal strings below are translated.
+ */
+const FRIENDLY_ERROR_MESSAGES: Record<string, string> = {
+  "Validation error": "Verifique os dados informados e tente novamente.",
+  "Log not found": "Registro não encontrado.",
+  "An error occurred.": "Não foi possível concluir a operação. Tente novamente.",
+  "Internal server error.":
+    "Ocorreu um erro inesperado. Tente novamente em instantes.",
+};
+
+const NETWORK_ERROR_MESSAGE =
+  "Não foi possível conectar ao servidor. Verifique sua conexão e tente novamente.";
+
+const GENERIC_ERROR_MESSAGE =
+  "Não foi possível concluir a operação. Tente novamente.";
+
+/**
+ * Resolves a friendly, user-facing message from a failed request.
+ *
+ * Priority: the back-end's `MSG.error` (the real, friendly message) → `MSG.message`
+ * → axios message. Known technical strings are mapped to friendlier copy, and
+ * requests that never reached the server surface a connectivity message.
+ */
+function resolveFriendlyErrorMessage(error: AxiosError<ApiResponse>): string {
+  // Request was sent but no response came back (server down, offline, CORS).
+  if (error.request && !error.response) {
+    return NETWORK_ERROR_MESSAGE;
+  }
+
+  const data = error.response?.data;
+  const raw =
+    data?.MSG?.error?.trim() ||
+    data?.MSG?.message?.trim() ||
+    (data as { message?: string } | undefined)?.message?.trim() ||
+    error.message?.trim() ||
+    "";
+
+  if (!raw) return GENERIC_ERROR_MESSAGE;
+
+  return FRIENDLY_ERROR_MESSAGES[raw] ?? raw;
+}
+
 const isDev = import.meta.env.DEV;
 
 const api = axios.create({
@@ -93,13 +140,7 @@ api.interceptors.response.use(
       }
     }
 
-    const message =
-      error.response?.data?.MSG?.message ??
-      (error.response?.data as { message?: string } | undefined)?.message ??
-      error.message ??
-      "An unexpected error occurred";
-
-    return Promise.reject(new Error(message));
+    return Promise.reject(new Error(resolveFriendlyErrorMessage(error)));
   },
 );
 
