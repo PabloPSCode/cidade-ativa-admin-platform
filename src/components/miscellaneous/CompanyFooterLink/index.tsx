@@ -11,13 +11,13 @@ export function CompanyFooterLink({
 }: CompanyFooterLinkProps) {
   return (
     <span className="text-black dark:text-white font-regular text-[11px] md:text-[12px] max-w-[200px] sm:max-w-[400px] m-auto text-center ">
-      {companyText}
+      Desenvolvido por{" "}
       <Link
         className="text-blue-600 text-[11px] md:text-[12px]"
         to={companyLink}
         target="_blank"
-      >
-        clicando aqui
+        >
+        {companyText}
       </Link>
       .
     </span>
