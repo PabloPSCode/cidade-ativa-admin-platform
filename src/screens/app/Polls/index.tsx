@@ -202,7 +202,7 @@ export function Polls() {
                     description={poll.description}
                     status={poll.status}
                     pollCoverUrl={poll.pollCoverUrl}
-                    createdAt={poll.createdAt}
+                    startedAt={poll.startedAt}
                     finishedAt={poll.finishedAt}
                     onSee={() => setDetailsPoll(poll)}
                     onEdit={() => setEditingPoll(poll)}
