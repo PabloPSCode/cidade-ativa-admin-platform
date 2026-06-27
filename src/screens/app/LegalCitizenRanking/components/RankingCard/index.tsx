@@ -1,85 +1,147 @@
-import { PiMedalFill } from "react-icons/pi";
+import { ListChecksIcon, MedalIcon } from "@phosphor-icons/react";
+import clsx from "clsx";
+import { useNavigate } from "react-router-dom";
 
-interface RankingCardProps {
+export interface RankingCardProps {
   position: number;
-  citizenName: string;
+  fullName: string;
   points: number;
-  onSeeActions: () => void;
+  actionsCount: number;
+  className?: string;
+  actionsLabel?: string;
+  actionsHref?: string;
 }
 
-const medalStyleByPosition: Record<
+const positionStyles: Record<
   number,
-  { iconClassName: string; positionClassName: string }
+  {
+    medalClassName: string;
+    cardClassName: string;
+    avatarClassName: string;
+  }
 > = {
   1: {
-    iconClassName: "text-yellow-500",
-    positionClassName: "text-slate-900 dark:text-gray-100",
+    medalClassName: "bg-[#f2c94c] text-[#3f2f00]",
+    cardClassName: "border-border-card",
+    avatarClassName: "bg-primary-500 text-white",
   },
   2: {
-    iconClassName: "text-slate-400",
-    positionClassName: "text-slate-900 dark:text-gray-100",
+    medalClassName: "bg-[#c7cdd4] text-[#28323c]",
+    cardClassName: "border-border-card",
+    avatarClassName: "bg-secondary-700 text-white dark:bg-white/15",
   },
   3: {
-    iconClassName: "text-amber-700",
-    positionClassName: "text-slate-900 dark:text-gray-100",
+    medalClassName: "bg-[#b7793d] text-white",
+    cardClassName: "border-border-card",
+    avatarClassName: "bg-secondary-600 text-white",
   },
 };
 
+const fallbackStyle = {
+  medalClassName: "",
+  cardClassName: "border-border-card/70",
+  avatarClassName: "bg-secondary-700 text-white dark:bg-white/15",
+};
+
+const getInitial = (fullName: string) => fullName.trim().charAt(0).toUpperCase();
+
 export default function RankingCard({
   position,
-  citizenName,
+  fullName,
   points,
-  onSeeActions,
+  actionsCount,
+  className,
+  actionsLabel = "Ver ações",
+  actionsHref,
 }: RankingCardProps) {
-  const isPodium = position >= 1 && position <= 3;
-  const medalStyle = medalStyleByPosition[position];
-  const initial = citizenName.trim().charAt(0).toUpperCase() || "?";
+  const navigate = useNavigate();
+  const accentStyle = positionStyles[position] ?? fallbackStyle;
+  const showMedal = Boolean(positionStyles[position]);
 
   return (
-    <article className="flex flex-col gap-4 rounded-md border border-gray-200 dark:border-slate-600 bg-white dark:bg-slate-700 p-4 shadow-sm sm:flex-row sm:items-center sm:gap-5 sm:p-5">
-      <div className="flex shrink-0 items-center gap-2 sm:min-w-[96px]">
-        <span
-          className={`text-4xl font-black sm:text-5xl ${medalStyle?.positionClassName ?? "text-slate-800 dark:text-gray-100"
-            }`}
-        >
-          {position}
-        </span>
-        {isPodium && medalStyle ? (
-          <PiMedalFill size={28} className={medalStyle.iconClassName} />
-        ) : null}
-      </div>
+    <article
+      className={clsx(
+        "ranking-card Container rounded-[2rem] border bg-bg-card p-4 shadow-[0_28px_64px_-48px_rgba(15,23,42,0.45)] transition sm:p-5 xl:p-6",
+        accentStyle.cardClassName,
+        className
+      )}
+    >
+      <div className="flex flex-col gap-5 lg:flex-row lg:items-center">
+        <div className="flex items-center gap-4 sm:gap-5 lg:min-w-[13rem]">
+          <div className="flex min-w-[6rem] items-center gap-3 sm:min-w-[7rem]">
+            <span className="text-4xl font-black tracking-tight text-foreground/85 sm:text-5xl">
+              {position}
+            </span>
+            {showMedal ? (
+              <span
+                className={clsx(
+                  "inline-flex h-10 w-10 items-center justify-center rounded-full shadow-sm",
+                  accentStyle.medalClassName
+                )}
+              >
+                <MedalIcon size={22} weight="fill" />
+              </span>
+            ) : null}
+          </div>
 
-      <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-md bg-pink-300 text-2xl font-bold text-white">
-        {initial}
-      </div>
-
-      <div className="flex flex-1 flex-col gap-3 sm:flex-row sm:items-center sm:gap-6">
-        <div className="min-w-0 flex-1">
-          <p className="text-xs font-bold text-slate-500 dark:text-gray-400">
-            Nome
-          </p>
-          <p className="truncate text-sm font-semibold text-slate-800 dark:text-gray-100 sm:text-base">
-            {citizenName}
-          </p>
+          <div
+            className={clsx(
+              "flex h-20 w-20 shrink-0 items-center justify-center rounded-full text-5xl font-light sm:h-24 sm:w-24 sm:text-6xl",
+              accentStyle.avatarClassName
+            )}
+            aria-hidden="true"
+          >
+            {getInitial(fullName)}
+          </div>
         </div>
 
-        <div className="shrink-0 sm:min-w-[180px]">
-          <p className="text-xs font-bold text-slate-500 dark:text-gray-400">
-            Pontos Cidadão Legal
-          </p>
-          <p className="text-sm font-semibold text-slate-800 dark:text-gray-100 sm:text-base">
-            {points}
-          </p>
+        <div className="grid flex-1 gap-4 md:grid-cols-3 xl:grid-cols-[minmax(0,1.25fr)_minmax(0,1fr)_minmax(0,0.95fr)]">
+          <div className="rounded-[1.25rem]  p-4 dark:bg-white/[0.03]">
+            <p className="text-xs font-semibold uppercase tracking-[0.18em] text-foreground/45">
+              Nome
+            </p>
+            <p className="mt-2 text-sm font-semibold text-foreground sm:text-base">
+              {fullName}
+            </p>
+          </div>
+
+          <div className="rounded-[1.25rem]  p-4 dark:bg-white/[0.03]">
+            <p className="text-xs font-semibold uppercase tracking-[0.18em] text-foreground/45">
+              Pontos Cidadão Legal
+            </p>
+            <p className="mt-2 text-sm font-semibold text-foreground sm:text-base">
+              {points}
+            </p>
+          </div>
+
+          <div className="rounded-[1.25rem]  p-4 dark:bg-white/[0.03]">
+            <p className="text-xs font-semibold uppercase tracking-[0.18em] text-foreground/45">
+              Ações realizadas
+            </p>
+            <div className="mt-2 flex items-center gap-2 text-sm font-semibold text-foreground sm:text-base">
+              <ListChecksIcon
+                size={18}
+                weight="fill"
+                className="shrink-0 text-foreground/55"
+              />
+              <span>{actionsCount}</span>
+            </div>
+          </div>
+        </div>
+
+        <div className="lg:ml-auto lg:min-w-[9.5rem]">
+          <button
+            type="button"
+            title="Ver ações cidadãs"
+            onClick={actionsHref ? () => navigate(actionsHref) : undefined}
+            className="flex items-center justify-center w-fit px-3 py-2 sm:px-4 sm:py-3 rounded-sm font-medium transition-colors duration-300 bg-primary-500 text-white hover:bg-primary-600 w-full justify-center rounded-sm px-6 py-3 text-sm !bg-primary-500 !text-white hover:!bg-primary-600"
+          >
+            <span className="opacity-100 text-xs font-medium sm:text-sm">
+              {actionsLabel}
+            </span>
+          </button>
         </div>
       </div>
-
-      <button
-        type="button"
-        onClick={onSeeActions}
-        className="h-12 shrink-0 rounded-md bg-emerald-600 px-5 text-sm font-bold text-white transition hover:bg-emerald-500 sm:self-center"
-      >
-        Ver ações
-      </button>
     </article>
   );
 }

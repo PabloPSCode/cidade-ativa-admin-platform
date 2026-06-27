@@ -1,14 +1,18 @@
 import GreetUser from "@/components/miscellaneous/GreetUser";
 import { Title } from "@/components/typography/Title";
+import { useAuthenticationStore } from "@/store/auth";
 import Feather from "feather-icons-react";
 import GeneralPanel from "../GeneralSolicitations/components/GeneralPanel";
+import ResourcesPanel from "./components/ResourcesPanel";
 
 export function Home() {
+  const { user } = useAuthenticationStore();
+
   return (
     <main className="min-h-screen w-full bg-gray-100 dark:bg-slate-800">
       <div className="mx-auto flex w-full max-w-[1200px] flex-col gap-8 px-4 py-4 sm:px-6 lg:px-8 lg:py-6">
         <header className="flex flex-col gap-4">
-          <GreetUser userName="John Doe" />
+          <GreetUser userName={user?.name ?? "administrador(a)"} />
           <div className="flex items-center gap-2">
             <Feather
               icon="bar-chart-2"
@@ -22,6 +26,8 @@ export function Home() {
         </header>
 
         <GeneralPanel />
+
+        <ResourcesPanel />
       </div>
     </main>
   );

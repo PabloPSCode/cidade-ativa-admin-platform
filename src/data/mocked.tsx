@@ -3,11 +3,31 @@ const menuItems = [
     title: "Solicitações",
     actions: [
       {
-        title: "Solicitações gerais",
+        title: "Gerenciar solicitações",
         link: "solicitacoes",
       },
     ],
     icon: "map-pin",
+  },
+  {
+    title: "Telefones públicos",
+    actions: [
+      {
+        title: "Gerenciar telefones públicos",
+        link: "telefones-publicos",
+      },
+    ],
+    icon: "phone",
+  },
+  {
+    title: "Enquetes",
+    actions: [
+      {
+        title: "Gerenciar enquetes",
+        link: "enquetes",
+      },
+    ],
+    icon: "bar-chart-2",
   },
   {
     title: "Cidadão legal",
@@ -16,18 +36,12 @@ const menuItems = [
         title: "Consultar ranking",
         link: "cidadao-legal",
       },
+      {
+        title: "Gerenciar ações",
+        link: "acoes",
+      },
     ],
     icon: "award",
-  },
-  {
-    title: "Outras ações",
-    actions: [
-      {
-        title: "Ação 1",
-        link: "action",
-      }
-    ],
-    icon: "plus-circle",
   },
 ];
 
