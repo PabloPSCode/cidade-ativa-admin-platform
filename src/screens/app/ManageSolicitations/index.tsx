@@ -5,6 +5,10 @@ import {
   type IFile,
 } from "@/components/miscellaneous/UploadedFile";
 import {
+  listSignaturesBySolicitation,
+  type SolicitationSignatureResponseDTO,
+} from "@/services/signatures";
+import {
   approveSolicitation,
   getSolicitationById,
   solveSolicitation,
@@ -20,6 +24,7 @@ import {
   CheckCircleIcon,
   ProhibitIcon,
   ThumbsUpIcon,
+  UsersThreeIcon,
 } from "@phosphor-icons/react";
 import { useCallback, useEffect, useState, type ChangeEvent } from "react";
 import { useParams } from "react-router-dom";
@@ -27,6 +32,7 @@ import {
   mapSolicitationDTOToRecord,
   type SolicitationRecord,
 } from "../GeneralSolicitations/constants/solicitations";
+import SignatureListCard from "./components/SignatureListCard";
 import SolicitationDetailsCard from "./components/SolicitationDetailsCard";
 
 export function ManageSolicitations() {
@@ -44,6 +50,28 @@ export function ManageSolicitations() {
   const [unconsiderModalOpen, setUnconsiderModalOpen] = useState(false);
   const [unconsiderCommentary, setUnconsiderCommentary] = useState("");
   const [isUnconsidering, setIsUnconsidering] = useState(false);
+
+  const [signatures, setSignatures] = useState<
+    SolicitationSignatureResponseDTO[]
+  >([]);
+  const [signaturesModalOpen, setSignaturesModalOpen] = useState(false);
+
+  useEffect(() => {
+    if (!id) return;
+    let cancelled = false;
+
+    listSignaturesBySolicitation(id)
+      .then((list) => {
+        if (!cancelled) setSignatures(list);
+      })
+      .catch(() => {
+        if (!cancelled) setSignatures([]);
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [id]);
 
   const fetchSolicitation = useCallback(async () => {
     if (!id) {
@@ -224,6 +252,15 @@ export function ManageSolicitations() {
                 </div>
 
                 <div className="flex flex-col gap-2 sm:flex-row sm:flex-wrap lg:justify-end">
+                  <button
+                    type="button"
+                    onClick={() => setSignaturesModalOpen(true)}
+                    className="inline-flex shrink-0 items-center justify-center gap-2 rounded-sm border border-foreground/15 bg-background px-5 py-3 text-sm font-medium text-foreground transition hover:bg-foreground/5"
+                  >
+                    <UsersThreeIcon size={18} weight="fill" />
+                    Ver assinaturas ({signatures.length})
+                  </button>
+
                   {canApprove && (
                     <button
                       type="button"
@@ -431,6 +468,56 @@ export function ManageSolicitations() {
                 {isUnconsidering
                   ? "Desconsiderando..."
                   : "Confirmar desconsideração"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {signaturesModalOpen && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4"
+          role="dialog"
+          aria-modal="true"
+          onClick={() => setSignaturesModalOpen(false)}
+        >
+          <div
+            className="max-h-[90vh] w-full max-w-lg overflow-y-auto rounded-[1.75rem] border border-border-card/70 bg-bg-card p-6 shadow-[0_32px_80px_-40px_rgba(15,23,42,0.6)]"
+            onClick={(event) => event.stopPropagation()}
+          >
+            <h2 className="text-xl font-black tracking-tight">
+              Assinaturas da solicitação
+            </h2>
+            <p className="mt-2 text-sm text-foreground/65">
+              Pessoas que concordaram e assinaram esta solicitação.
+            </p>
+
+            <div className="mt-4">
+              {signatures.length > 0 ? (
+                <div className="flex max-h-[400px] flex-col gap-3 overflow-y-auto">
+                  {signatures.map((signature) => (
+                    <SignatureListCard
+                      key={signature.id}
+                      userName={signature.userName}
+                      signatureImageUrl={signature.imageUrl}
+                      signedAt={signature.createdAt}
+                    />
+                  ))}
+                </div>
+              ) : (
+                <p className="rounded-sm border border-border-card/70 bg-background/70 px-4 py-6 text-center text-sm text-foreground/65 dark:bg-white/[0.02]">
+                  Esta solicitação ainda não possui assinaturas.
+                </p>
+              )}
+            </div>
+
+            <div className="mt-6 flex justify-end">
+              <button
+                type="button"
+                onClick={() => setSignaturesModalOpen(false)}
+                className="rounded-sm border border-foreground/15 bg-background px-5 py-3 text-sm font-semibold text-foreground transition hover:bg-foreground/5"
+              >
+                Fechar
               </button>
             </div>
           </div>
