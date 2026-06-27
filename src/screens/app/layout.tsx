@@ -6,6 +6,7 @@ import { Title } from "@/components/typography/Title";
 import { menuItems } from "@/data/mocked";
 import { useAuthenticationStore } from "@/store/auth";
 import { useThemeStore } from "@/store/theme";
+import { getNameInitials } from "@/utils/formats";
 import {
   reactMobileMenuModalCustomStyles,
   reactModalCustomStyles,
@@ -69,7 +70,7 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
   const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
   const [isMobileMenuModalOpen, setIsMobileMenuModalOpen] = useState(false);
 
-  const { signOut } = useAuthenticationStore();
+  const { signOut, user } = useAuthenticationStore();
 
   const { theme, toggleTheme } = useThemeStore();
 
@@ -146,8 +147,8 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
     <section className="tesla-theme flex h-screen flex-col overflow-hidden bg-slate-100 dark:bg-slate-900">
       <LoadingBar ref={ref as never} height={4} color="#3E6AE1" />
       <Toaster />
-      <div className="flex flex-row w-full min-h-screen">
-        <nav className="hidden xl:flex flex-col w-[320px] min-h-screen overflow-auto p-8 bg-white dark:bg-slate-900 items-start">
+      <div className="flex flex-1 min-h-0 w-full flex-row">
+        <nav className="hidden xl:flex flex-col w-[320px] overflow-auto p-8 bg-white dark:bg-slate-900 items-start border-border-card/40 border-r-2">
           <Link to="/dashboard">
             <img
               src={theme === 'dark' ? logoDark : logo}
@@ -196,8 +197,21 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
               </AccordionBody>
             </Accordion>
           ))}
+          <a
+            href="mailto:contato@plssistemas.com.br"
+            target="_blank"
+            className="mt-auto w-full break-all pt-8 text-[12px] lg:text-[13px] text-slate-600 dark:text-gray-300 transition hover:text-primary dark:hover:text-primary-light"
+          >
+            Suporte: contato@plssistemas.com.br
+          </a>
+          <div className="mt-4 w-full">
+            <CompanyFooterLink
+              companyText="PLS Sistemas"
+              companyLink="https://www.plssistemas.com.br"
+            />
+          </div>
         </nav>
-        <div className="flex h-screen w-full flex-1 flex-col justify-between overflow-y-auto bg-slate-100 pb-0 dark:bg-slate-900">
+        <div className="flex min-h-0 w-full flex-1 flex-col overflow-y-auto bg-slate-100 dark:bg-slate-900">
           <header
             className={
               !isMobileMenuModalOpen
@@ -234,29 +248,33 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
                   <MdLightMode className="h-5 w-5 text-slate-800 dark:text-gray-100 mr-4 sm:mr-8" />
                 )}
               </button>
-              <Avatar
-                src="https://docs.material-tailwind.com/img/face-2.jpg"
-                alt="avatar"
-                size="sm"
-              />
+              {user?.profileImageUrl ? (
+                <Avatar
+                  src={user.profileImageUrl}
+                  alt={user?.name ?? "Avatar do usuário"}
+                  size="sm"
+                />
+              ) : (
+                <div
+                  className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-primary text-sm font-semibold text-white"
+                  aria-label={user?.name ?? "Avatar do usuário"}
+                  title={user?.name ?? undefined}
+                >
+                  {getNameInitials(user?.name)}
+                </div>
+              )}
               <button
                 className="flex flex-row justify-between items-center p-2 ml-3"
                 onClick={handleToggleLogoutModal}
               >
-                <span className="text-[12px] lx:text-sm normal-case text-secondary-dark dark:text-secondary-light">
+                <span className="text-[12px] lx:text-sm normal-case text-secondary-dark dark:text-white/80">
                   Sair
                 </span>
-                <MdLogout className="w-5 h-5 ml-1 text-secondary-dark dark:text-secondary-light" />
+                <MdLogout className="w-5 h-5 ml-1 text-secondary-dark dark:text-white/80" />
               </button>
             </div>
           </header>
-          <div className="mt-[96px]">{children}</div>
-          <footer className="my-8 mx-auto flex items-center justify-center bg-slate-100 px-2 md:p-8 dark:bg-slate-900">
-            <CompanyFooterLink
-              companyText="Desenvolvido por PLS Sistemas "
-              companyLink="https://www.plssistemas.com.br"
-            />
-          </footer>
+          <div className="flex flex-1 flex-col pt-[96px]">{children}</div>
         </div>
       </div>
       <Modal
@@ -353,6 +371,19 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
               </AccordionBody>
             </Accordion>
           ))}
+          <a
+            href="mailto:contato@plssistemas.com.br"
+            target="_blank"
+            className="mt-auto w-full break-all pt-8 text-[12px] lg:text-[13px] text-slate-600 dark:text-gray-300 transition hover:text-primary dark:hover:text-primary-light"
+          >
+            Suporte: contato@plssistemas.com.br
+          </a>
+          <div className="mt-4 w-full">
+            <CompanyFooterLink
+              companyText="PLS Sistemas"
+              companyLink="https://www.plssistemas.com.br"
+            />
+          </div>
         </nav>
       </Modal>
     </section>

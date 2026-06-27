@@ -17,7 +17,7 @@ function App() {
   }, [theme]);
 
   return (
-    <div className="tesla-theme min-h-screen w-full">
+    <div className="tesla-theme h-full w-full overflow-hidden">
       <Routes />
     </div>
   );

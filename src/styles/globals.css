@@ -23,6 +23,104 @@
   --tesla-placeholder: #8e8e8e;
   --tesla-font-text: "Montserrat", sans-serif;
   --tesla-font-display: "Montserrat", sans-serif;
+
+  /* Cidade Ativa design-system color tokens (shared with citizen platform) */
+  --color-primary-50: #eef3ff;
+  --color-primary-100: #dce7ff;
+  --color-primary-200: #b9ceff;
+  --color-primary-300: #8daeff;
+  --color-primary-400: #6389ef;
+  --color-primary-500: #3e6ae1;
+  --color-primary-600: #3457b2;
+  --color-primary-700: #294689;
+  --color-primary-800: #203568;
+  --color-primary-900: #17264a;
+  --color-primary-950: #10192f;
+
+  --color-secondary-50: #ffffff;
+  --color-secondary-100: #f8f8f8;
+  --color-secondary-200: #f4f4f4;
+  --color-secondary-300: #eeeeee;
+  --color-secondary-400: #d0d1d2;
+  --color-secondary-500: #8e8e8e;
+  --color-secondary-600: #5c5e62;
+  --color-secondary-700: #393c41;
+  --color-secondary-800: #24272c;
+  --color-secondary-900: #171a20;
+  --color-secondary-950: #0b0d10;
+
+  --color-tertiary-50: #f8f8f8;
+  --color-tertiary-100: #f4f4f4;
+  --color-tertiary-200: #eeeeee;
+  --color-tertiary-300: #d0d1d2;
+  --color-tertiary-400: #8e8e8e;
+  --color-tertiary-500: #5c5e62;
+  --color-tertiary-600: #393c41;
+  --color-tertiary-700: #24272c;
+  --color-tertiary-800: #171a20;
+  --color-tertiary-900: #101216;
+  --color-tertiary-950: #07080a;
+
+  --color-info-50: #eef3ff;
+  --color-info-100: #dce7ff;
+  --color-info-200: #b9ceff;
+  --color-info-300: #8daeff;
+  --color-info-400: #6389ef;
+  --color-info-500: #3e6ae1;
+  --color-info-600: #3457b2;
+  --color-info-700: #294689;
+  --color-info-800: #203568;
+  --color-info-900: #17264a;
+  --color-info-950: #10192f;
+
+  --color-success-50: #eefdf5;
+  --color-success-100: #d7f8e6;
+  --color-success-200: #b2eccd;
+  --color-success-300: #7edbad;
+  --color-success-400: #38bf83;
+  --color-success-500: #129962;
+  --color-success-600: #0c7a4d;
+  --color-success-700: #095f3d;
+  --color-success-800: #074a30;
+  --color-success-900: #053522;
+  --color-success-950: #031e13;
+
+  --color-alert-50: #fff8eb;
+  --color-alert-100: #ffedc7;
+  --color-alert-200: #ffd88a;
+  --color-alert-300: #ffbd4a;
+  --color-alert-400: #f59b18;
+  --color-alert-500: #c7790a;
+  --color-alert-600: #9d5e08;
+  --color-alert-700: #784806;
+  --color-alert-800: #5a3504;
+  --color-alert-900: #3a2203;
+  --color-alert-950: #211301;
+
+  --color-destructive-50: #fff1f3;
+  --color-destructive-100: #ffe0e5;
+  --color-destructive-200: #ffc0cb;
+  --color-destructive-300: #ff91a5;
+  --color-destructive-400: #f85f7c;
+  --color-destructive-500: #d92d4a;
+  --color-destructive-600: #b71f38;
+  --color-destructive-700: #91172c;
+  --color-destructive-800: #6f1222;
+  --color-destructive-900: #4a0b16;
+  --color-destructive-950: #2b060d;
+
+  --color-background: #f9f9f9;
+  --color-foreground: #171a20;
+  --color-bg-card: #ffffff;
+  --color-border-card: #d0d1d2;
+  --color-surface-muted: #f4f4f4;
+  --color-shell-border: rgba(23, 26, 32, 0.12);
+  --color-shell-shadow: none;
+  --color-header-bg: rgba(255, 255, 255, 0.94);
+  --radius-sm: 0.25rem;
+
+  --font-primary: var(--tesla-font-text);
+  --font-secondary: var(--tesla-font-display);
 }
 
 :root.dark {
@@ -33,12 +131,24 @@
   --tesla-text-muted: #b5b7ba;
   --tesla-border: #2a2e35;
   --tesla-placeholder: #8b8f95;
+
+  /* Cidade Ativa design-system dark surfaces */
+  --color-background: #0f1115;
+  --color-foreground: #f4f4f4;
+  --color-bg-card: #171a20;
+  --color-border-card: #393c41;
+  --color-surface-muted: #111419;
+  --color-shell-border: rgba(255, 255, 255, 0.14);
+  --color-shell-shadow: none;
+  --color-header-bg: rgba(11, 13, 16, 0.94);
 }
 
 html,
 body,
 #root {
-  min-height: 100%;
+  height: 100%;
+  /* Lock the document to the viewport: only inner layout containers scroll. */
+  overflow: hidden;
 }
 
 body {
@@ -92,8 +202,8 @@ body {
   font-size: 14px;
 }
 
-.tesla-theme [class*="rounded"],
-.tesla-theme article,
+.tesla-theme [class*="rounded"]:not([class*="rounded-full"]),
+.tesla-theme article:not([class*="rounded-full"]),
 .tesla-theme [data-card="true"] {
   border-radius: var(--tesla-radius-sm) !important;
 }
