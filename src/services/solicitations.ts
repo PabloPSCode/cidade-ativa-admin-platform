@@ -17,6 +17,7 @@ export interface SolicitationResponseDTO {
   requestingUserId: string;
   requestingUserName: string;
   solicitationTypeId: string;
+  isCollective: boolean;
   status: SolicitationStatus;
   unsolvedImageUrls: string[];
   solvedImageUrls: string[] | null;

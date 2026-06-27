@@ -5,6 +5,7 @@ import {
   SpinnerGapIcon,
   TrashIcon,
   UserCircleIcon,
+  UsersIcon,
 } from "@phosphor-icons/react";
 import clsx from "clsx";
 import { useNavigate } from "react-router-dom";
@@ -38,6 +39,7 @@ export default function SolicitationCard({
   neighborhood,
   createdAt,
   street,
+  isCollective,
   status,
   className,
   detailsHref,
@@ -121,6 +123,16 @@ export default function SolicitationCard({
                   />
                   {statusLabel ?? statusConfig.label}
                 </span>
+                {isCollective ? (
+                  <span
+                    title="Solicitação coletiva"
+                    aria-label="Solicitação coletiva"
+                    className="inline-flex items-center gap-1.5 rounded-full bg-success-500/15 px-2.5 py-1 text-xs font-semibold text-success-700 dark:bg-success-400/15 dark:text-success-200"
+                  >
+                    <UsersIcon size={14} weight="fill" />
+                    Coletiva
+                  </span>
+                ) : null}
               </div>
             </div>
           </div>

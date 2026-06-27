@@ -18,6 +18,7 @@ export interface SolicitationSummary {
   neighborhood: string;
   createdAt: string;
   street: string;
+  isCollective: boolean;
   status: SolicitationStatus;
 }
 
@@ -130,6 +131,7 @@ export function mapSolicitationDTOToRecord(
     neighborhood: dto.neighborhood,
     createdAt,
     street: dto.street,
+    isCollective: dto.isCollective ?? false,
     status: dto.status,
     mapAddress: `${dto.street}, ${dto.neighborhood}, Brasil`,
     resolutionComment: dto.solvedCommentary ?? "",
