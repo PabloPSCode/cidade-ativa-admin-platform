@@ -1,18 +1,23 @@
 import {
+  CalendarDotsIcon,
+  MapPinLineIcon,
+  PencilSimpleLineIcon,
+  SpinnerGapIcon,
+  TrashIcon,
+  UserCircleIcon,
+} from "@phosphor-icons/react";
+import clsx from "clsx";
+import { useNavigate } from "react-router-dom";
+import {
   formatSolicitationDate,
   solicitationStatusMap,
-} from "@/data/mockedSolicitations";
-import type { SolicitationSummary } from "@/interfaces/dtos/Solicitation";
-import {
-  PiCalendarDots,
-  PiMapPinLine,
-  PiSpinnerGap,
-  PiUserCircle
-} from "react-icons/pi";
-import { useNavigate } from "react-router-dom";
+  type SolicitationSummary,
+} from "../../constants/solicitations";
 
 export interface SolicitationCardProps
-  extends Omit<SolicitationSummary, "id" | "protocolNumber"> {
+  extends Omit<SolicitationSummary, "id" | "protocolNumber" | "requestingUserName"> {
+  protocolNumber?: string;
+  requestingUserName?: string;
   className?: string;
   detailsHref?: string;
   titleLabel?: string;
@@ -25,19 +30,23 @@ export interface SolicitationCardProps
 
 export default function SolicitationCard({
   title,
+  protocolNumber,
   requestingUserId,
+  requestingUserName,
   description,
   imageUrls,
   neighborhood,
   createdAt,
   street,
   status,
-  className = "",
+  className,
   detailsHref,
   titleLabel = "Solicitação",
   requestingUserLabel = "Requerente",
   statusLabel,
   detailsButtonLabel = "Ver detalhes",
+  onEdit,
+  onDelete,
 }: SolicitationCardProps) {
   const navigate = useNavigate();
   const statusConfig = solicitationStatusMap[status];
@@ -50,9 +59,7 @@ export default function SolicitationCard({
     }
   };
 
-  const interactiveClasses = isInteractive
-    ? "cursor-pointer hover:-translate-y-0.5 hover:border-slate-300 dark:hover:border-slate-500 focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500/50"
-    : "";
+  const hasManagementActions = Boolean(onEdit || onDelete);
 
   return (
     <article
@@ -62,113 +69,184 @@ export default function SolicitationCard({
       onKeyDown={
         isInteractive
           ? (event) => {
-            if (event.key === "Enter" || event.key === " ") {
-              event.preventDefault();
-              handleNavigateToDetails();
+              if (event.key === "Enter" || event.key === " ") {
+                event.preventDefault();
+                handleNavigateToDetails();
+              }
             }
-          }
           : undefined
       }
-      className={`rounded-md border border-gray-200 dark:border-slate-600 bg-white dark:bg-slate-700 p-4 shadow-[0_28px_64px_-48px_rgba(15,23,42,0.45)] transition ${interactiveClasses} ${className}`}
+      className={clsx(
+        "solicitation-card Container w-full max-w-full rounded-[2rem] border border-border-card/70 bg-bg-card p-4 shadow-[0_28px_64px_-48px_rgba(15,23,42,0.45)] transition sm:p-5 xl:p-6",
+        isInteractive &&
+          "cursor-pointer hover:border-foreground/20 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500/40",
+        className
+      )}
     >
-      <div className="flex flex-col gap-4">
-        <div className="flex w-full items-center justify-end gap-2.5">
-          {detailsHref ? (
-            <button
-              type="button"
-              onClick={(event) => {
-                event.stopPropagation();
-                handleNavigateToDetails();
-              }}
-              className="justify-center rounded-md bg-cyan-500 px-4 py-2.5 text-xs md:text-sm font-bold text-white transition hover:bg-primary-600"
-            >
-              {detailsButtonLabel}
-            </button>
-          ) : null}
+      <div className="grid w-full gap-5 xl:grid-cols-[136px_minmax(0,1fr)_auto] xl:items-start">
+        <div className="relative h-44 overflow-hidden rounded-[1.5rem] bg-neutral-200 dark:bg-white/5 sm:h-52 xl:h-28 xl:w-[136px]">
+          <img
+            src={mainImageUrl}
+            alt={`Imagem de ${title.toLowerCase()} em ${street}`}
+            className="absolute inset-0 h-full w-full object-cover"
+          />
         </div>
-        <img
-          src={mainImageUrl}
-          alt={`Imagem de ${title.toLowerCase()} em ${street}`}
-          className="h-44 w-full object-cover"
-        />
 
-
-        <div className="flex min-w-0 flex-col gap-4">
+        <div className="flex min-w-0 flex-col gap-4 xl:self-center">
           <div className="space-y-2">
             <div className="space-y-2">
-              <p className="text-xs md:text-sm font-semibold uppercase tracking-[0.18em] text-slate-500 dark:text-gray-400">
-                {titleLabel}
-              </p>
+              <div className="flex items-center gap-3">
+                <p className="text-xs font-semibold uppercase tracking-[0.18em] text-foreground/45">
+                  {titleLabel}
+                </p>
+                {protocolNumber ? (
+                  <span className="text-xs font-semibold text-foreground/45">
+                    #{protocolNumber}
+                  </span>
+                ) : null}
+              </div>
               <div className="flex flex-wrap items-center gap-3">
-                <h3 className="text-xs md:text-sm font-black tracking-tight text-slate-800 dark:text-gray-100">
-                  {title}
-                </h3>
+                <h3 className="text-lg font-black tracking-tight">{title}</h3>
+                <span
+                  className={clsx(
+                    "inline-flex items-center gap-2 rounded-full px-3 py-1 text-xs font-semibold",
+                    statusConfig.badgeClassName
+                  )}
+                >
+                  <span
+                    className={clsx(
+                      "h-2.5 w-2.5 rounded-full",
+                      statusConfig.dotClassName
+                    )}
+                  />
+                  {statusLabel ?? statusConfig.label}
+                </span>
               </div>
             </div>
-
-            <p className="text-xs md:text-sm leading-6 text-slate-600 dark:text-gray-300">
-              {description}
-            </p>
           </div>
 
-          <div className="flex flex-wrap gap-2.5 text-xs md:text-sm font-medium text-slate-500 dark:text-gray-400">
-            <span className="inline-flex items-center gap-2 rounded-md bg-gray-100 dark:bg-white/5 px-3 py-1.5">
-              <PiMapPinLine size={16} />
+          <div className="flex flex-wrap gap-2.5 text-xs font-medium text-foreground/60 sm:text-sm">
+            <span className="inline-flex items-center gap-2 rounded-sm bg-foreground/5 px-3 py-2 dark:bg-white/5">
+              <MapPinLineIcon size={16} weight="fill" />
               {street}
             </span>
-            <span className="inline-flex items-center gap-2 rounded-md bg-gray-100 dark:bg-white/5 px-3 py-1.5">
-              <PiSpinnerGap size={16} />
+            <span className="inline-flex items-center gap-2 rounded-sm bg-foreground/5 px-3 py-2 dark:bg-white/5">
+              <SpinnerGapIcon size={16} weight="bold" />
               {neighborhood}
             </span>
           </div>
         </div>
 
-        <div className="grid gap-4 grid-cols-2">
-          <div className="rounded-md bg-gray-50 dark:bg-white/[0.03] p-3">
-            <p className="text-xs md:text-sm font-semibold uppercase tracking-[0.18em] text-slate-500 dark:text-gray-400">
+        <div
+          className={clsx(
+            "flex flex-wrap items-center gap-3 xl:justify-self-end xl:self-center",
+            hasManagementActions ? "xl:max-w-[18rem]" : "xl:max-w-[11rem]"
+          )}
+        >
+          {onEdit ? (
+            <button
+              type="button"
+              title="Editar solicitação"
+              aria-label="Editar solicitação"
+              onClick={(event) => {
+                event.stopPropagation();
+                onEdit();
+              }}
+              className="inline-flex h-11 w-11 items-center justify-center rounded-2xl border border-foreground/10 bg-background/80 text-foreground transition hover:border-foreground/20 hover:bg-foreground/5 dark:bg-white/[0.03]"
+            >
+              <PencilSimpleLineIcon size={20} weight="bold" />
+            </button>
+          ) : null}
+
+          {onDelete ? (
+            <button
+              type="button"
+              title="Excluir solicitação"
+              aria-label="Excluir solicitação"
+              onClick={(event) => {
+                event.stopPropagation();
+                onDelete();
+              }}
+              className="inline-flex h-11 w-11 items-center justify-center rounded-sm border border-destructive-500/25 bg-destructive-500/10 text-destructive-600 transition hover:bg-destructive-500/15 dark:text-destructive-300"
+            >
+              <TrashIcon size={20} weight="fill" />
+            </button>
+          ) : null}
+
+          <button
+            type="button"
+            onClick={
+              detailsHref
+                ? (event) => {
+                    event.stopPropagation();
+                    handleNavigateToDetails();
+                  }
+                : undefined
+            }
+            className="flex flex-1 items-center justify-center rounded-sm px-6 py-3 text-sm font-medium !bg-primary-500 !text-white transition hover:!bg-primary-600 xl:min-w-[10rem]"
+          >
+            {detailsButtonLabel}
+          </button>
+        </div>
+
+        <div className="rounded-[1.25rem] bg-background/80 p-4 dark:bg-white/[0.03] xl:col-span-full">
+          <p className="text-xs font-semibold uppercase tracking-[0.18em] text-foreground/45">
+            Descrição
+          </p>
+          <p className="mt-2 text-sm leading-6 text-foreground/75 sm:text-[0.95rem]">
+            {description}
+          </p>
+        </div>
+
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4 xl:col-span-full">
+          <div className="rounded-[1.25rem] bg-background/80 p-4 dark:bg-white/[0.03]">
+            <p className="text-xs font-semibold uppercase tracking-[0.18em] text-foreground/45">
               Bairro
             </p>
-            <p className="mt-1.5 text-xs md:text-sm font-semibold text-slate-800 dark:text-gray-100">
+            <p className="mt-2 text-sm font-semibold text-foreground sm:text-base">
               {neighborhood}
             </p>
           </div>
 
-          <div className="rounded-md bg-gray-50 dark:bg-white/[0.03] p-3">
-            <p className="text-xs md:text-sm font-semibold uppercase tracking-[0.18em] text-slate-500 dark:text-gray-400">
+          <div className="rounded-[1.25rem] bg-background/80 p-4 dark:bg-white/[0.03]">
+            <p className="text-xs font-semibold uppercase tracking-[0.18em] text-foreground/45">
               Status
             </p>
-            <p className="mt-1.5 text-xs md:text-sm font-semibold text-slate-800 dark:text-gray-100">
+            <p className="mt-2 text-sm font-semibold text-foreground sm:text-base">
               {statusLabel ?? statusConfig.label}
             </p>
           </div>
 
-          <div className="rounded-md bg-gray-50 dark:bg-white/[0.03] p-3">
-            <p className="text-xs md:text-sm font-semibold uppercase tracking-[0.18em] text-slate-500 dark:text-gray-400">
+          <div className="rounded-[1.25rem] bg-background/80 p-4 dark:bg-white/[0.03]">
+            <p className="text-xs font-semibold uppercase tracking-[0.18em] text-foreground/45">
               {requestingUserLabel}
             </p>
-            <div className="mt-1.5 flex items-center gap-2 text-xs md:text-sm font-semibold text-slate-800 dark:text-gray-100">
-              <PiUserCircle
+            <div className="mt-2 flex items-center gap-2 text-sm font-semibold text-foreground sm:text-base">
+              <UserCircleIcon
                 size={18}
-                className="shrink-0 text-slate-500 dark:text-gray-400"
+                weight="fill"
+                className="shrink-0 text-foreground/55"
               />
-              <span className="truncate">{requestingUserId}</span>
+              <span className="truncate">
+                {requestingUserName || requestingUserId}
+              </span>
             </div>
           </div>
 
-          <div className="rounded-md bg-gray-50 dark:bg-white/[0.03] p-3">
-            <p className="text-xs md:text-sm font-semibold uppercase tracking-[0.18em] text-slate-500 dark:text-gray-400">
+          <div className="rounded-[1.25rem] bg-background/80 p-4 dark:bg-white/[0.03]">
+            <p className="text-xs font-semibold uppercase tracking-[0.18em] text-foreground/45">
               Data de cadastro
             </p>
-            <div className="mt-1.5 flex items-center gap-2 text-xs md:text-sm font-semibold text-slate-800 dark:text-gray-100">
-              <PiCalendarDots
+            <div className="mt-2 flex items-center gap-2 text-sm font-semibold text-foreground sm:text-base">
+              <CalendarDotsIcon
                 size={18}
-                className="shrink-0 text-slate-500 dark:text-gray-400"
+                weight="fill"
+                className="shrink-0 text-foreground/55"
               />
               <span>{formatSolicitationDate(createdAt)}</span>
             </div>
           </div>
         </div>
-
       </div>
     </article>
   );

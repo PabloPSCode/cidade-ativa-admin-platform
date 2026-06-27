@@ -2,7 +2,7 @@ export type SolicitationStatus =
   | "not_resolved"
   | "in_progress"
   | "resolved"
-  | "disregarded";
+  | "unconsidered";
 
 export interface SolicitationSummary {
   id: string;

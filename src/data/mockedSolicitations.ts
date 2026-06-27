@@ -29,7 +29,7 @@ export const solicitationStatusMap: Record<
     badgeClassName:
       "bg-emerald-500/15 text-emerald-700 dark:bg-emerald-400/15 dark:text-emerald-200",
   },
-  disregarded: {
+  unconsidered: {
     label: "Desconsiderado",
     dotClassName: "bg-red-500",
     badgeClassName:
@@ -196,7 +196,7 @@ const solicitationStatuses: SolicitationStatus[] = [
   "resolved",
   "in_progress",
   "not_resolved",
-  "disregarded",
+  "unconsidered",
 ];
 
 const resolutionCommentByStatus: Record<SolicitationStatus, string> = {
@@ -206,7 +206,7 @@ const resolutionCommentByStatus: Record<SolicitationStatus, string> = {
     "A equipe técnica realizou a vistoria inicial e o atendimento segue programado para a próxima janela operacional.",
   not_resolved:
     "A demanda foi registrada e aguarda o primeiro atendimento da equipe responsável para definição da tratativa.",
-  disregarded:
+  unconsidered:
     "A solicitação foi desconsiderada após análise da equipe responsável por não se enquadrar nos critérios de atendimento.",
 };
 
@@ -236,7 +236,7 @@ export const mockedSolicitations: SolicitationRecord[] = Array.from(
       status,
       resolutionComment: resolutionCommentByStatus[status],
       resolutionImageUrls:
-        status === "not_resolved" || status === "disregarded"
+        status === "not_resolved" || status === "unconsidered"
           ? []
           : seed.resolutionImageUrls,
     };
@@ -266,8 +266,8 @@ export const solicitationStats = {
   ).length,
   resolved: mockedSolicitations.filter((item) => item.status === "resolved")
     .length,
-  disregarded: mockedSolicitations.filter(
-    (item) => item.status === "disregarded"
+  unconsidered: mockedSolicitations.filter(
+    (item) => item.status === "unconsidered"
   ).length,
 };
 
