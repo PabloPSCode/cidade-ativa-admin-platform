@@ -12,6 +12,9 @@
   "dependencies": {
     "@hookform/resolvers": "3.9.0",
     "@material-tailwind/react": "2.1.9",
+    "@phosphor-icons/react": "^2.1.10",
+    "axios": "^1.17.0",
+    "clsx": "^2.1.1",
     "feather-icons-react": "0.7.0",
     "react": "18.3.0",
     "react-countup": "6.5.3",
