@@ -4,7 +4,6 @@ import {
 } from "@/services/done-cool-actions";
 import { getErrorMessage, showAlertError } from "@/utils/alerts";
 import { useEffect, useMemo, useState } from "react";
-import { PiTrophyFill } from "react-icons/pi";
 import RankingCard from "./components/RankingCard";
 import { MedalIcon } from "@phosphor-icons/react";
 
