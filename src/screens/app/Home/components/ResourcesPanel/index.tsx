@@ -1,8 +1,8 @@
+import { useAsyncData } from "@/hooks/useAsyncData";
 import { listCoolActions } from "@/services/cool-actions";
 import { listPolls } from "@/services/polls";
 import { listPublicPhones } from "@/services/public-phones";
-import { getErrorMessage, showAlertError } from "@/utils/alerts";
-import { ReactNode, useEffect, useState } from "react";
+import { ReactNode } from "react";
 import {
   PiArrowRight,
   PiChartBar,
@@ -61,48 +61,28 @@ function ResourceCard({
 }
 
 export default function ResourcesPanel() {
-  const [publicPhonesCount, setPublicPhonesCount] = useState(0);
-  const [coolActionsCount, setCoolActionsCount] = useState(0);
-  const [pollsCount, setPollsCount] = useState(0);
-  const [isLoading, setIsLoading] = useState(true);
-
-  useEffect(() => {
-    let cancelled = false;
-
-    async function fetchCounts() {
-      setIsLoading(true);
-      try {
-        const [publicPhones, coolActions, polls] = await Promise.all([
-          listPublicPhones({ page: 1, perPage: 100 }),
-          listCoolActions({ page: 1, perPage: 100 }),
-          listPolls({ page: 1, perPage: 100 }),
-        ]);
-        if (cancelled) return;
-        setPublicPhonesCount(publicPhones.meta.total);
-        setCoolActionsCount(coolActions.meta.total);
-        setPollsCount(polls.meta.total);
-      } catch (error) {
-        if (!cancelled) {
-          setPublicPhonesCount(0);
-          setCoolActionsCount(0);
-          setPollsCount(0);
-          showAlertError(
-            getErrorMessage(
-              error,
-              "Não foi possível carregar os recursos da plataforma.",
-            ),
-          );
-        }
-      } finally {
-        if (!cancelled) setIsLoading(false);
-      }
-    }
-
-    fetchCounts();
-    return () => {
-      cancelled = true;
-    };
-  }, []);
+  const {
+    data: { publicPhonesCount, coolActionsCount, pollsCount },
+    isLoading,
+  } = useAsyncData(
+    async () => {
+      const [publicPhones, coolActions, polls] = await Promise.all([
+        listPublicPhones({ page: 1, perPage: 100 }),
+        listCoolActions({ page: 1, perPage: 100 }),
+        listPolls({ page: 1, perPage: 100 }),
+      ]);
+      return {
+        publicPhonesCount: publicPhones.meta.total,
+        coolActionsCount: coolActions.meta.total,
+        pollsCount: polls.meta.total,
+      };
+    },
+    {
+      initialData: { publicPhonesCount: 0, coolActionsCount: 0, pollsCount: 0 },
+      errorMessage: "Não foi possível carregar os recursos da plataforma.",
+      resetOnError: true,
+    },
+  );
 
   const displayValue = (value: number): ReactNode => (isLoading ? "—" : value);
 

@@ -1,6 +1,6 @@
+import { useAsyncData } from "@/hooks/useAsyncData";
 import { listSolicitations } from "@/services/solicitations";
-import { getErrorMessage, showAlertError } from "@/utils/alerts";
-import { ReactNode, useEffect, useState } from "react";
+import { ReactNode } from "react";
 import {
   PiBuildings,
   PiChartBar,
@@ -85,49 +85,27 @@ function StatCard({
 }
 
 export default function GeneralPanel() {
-  const [stats, setStats] = useState<SolicitationStats>(EMPTY_STATS);
-  const [isLoading, setIsLoading] = useState(true);
-
-  useEffect(() => {
-    let cancelled = false;
-
-    async function fetchStats() {
-      setIsLoading(true);
-      try {
-        const result = await listSolicitations({ page: 1, perPage: 100 });
-        if (cancelled) return;
-
-        const items = result.data;
-        setStats({
-          total: items.length,
-          pending: items.filter((item) => item.status === "not_resolved")
-            .length,
-          inProgress: items.filter((item) => item.status === "in_progress")
-            .length,
-          resolved: items.filter((item) => item.status === "resolved").length,
-          unconsidered: items.filter((item) => item.status === "unconsidered")
-            .length,
-        });
-      } catch (error) {
-        if (!cancelled) {
-          setStats(EMPTY_STATS);
-          showAlertError(
-            getErrorMessage(
-              error,
-              "Não foi possível carregar as estatísticas das solicitações.",
-            ),
-          );
-        }
-      } finally {
-        if (!cancelled) setIsLoading(false);
-      }
-    }
-
-    fetchStats();
-    return () => {
-      cancelled = true;
-    };
-  }, []);
+  const { data: stats, isLoading } = useAsyncData<SolicitationStats>(
+    async () => {
+      const result = await listSolicitations({ page: 1, perPage: 100 });
+      const items = result.data;
+      return {
+        total: items.length,
+        pending: items.filter((item) => item.status === "not_resolved").length,
+        inProgress: items.filter((item) => item.status === "in_progress")
+          .length,
+        resolved: items.filter((item) => item.status === "resolved").length,
+        unconsidered: items.filter((item) => item.status === "unconsidered")
+          .length,
+      };
+    },
+    {
+      initialData: EMPTY_STATS,
+      errorMessage:
+        "Não foi possível carregar as estatísticas das solicitações.",
+      resetOnError: true,
+    },
+  );
 
   const displayValue = (value: number): ReactNode => (isLoading ? "—" : value);
 

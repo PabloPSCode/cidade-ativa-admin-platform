@@ -16,6 +16,8 @@ interface DeleteModalProps {
   ) => void;
   onConfirmAction: (param: any) => void;
   onClose: () => void;
+  /** Disables both buttons and shows a pending label while the deletion runs. */
+  isProcessing?: boolean;
 }
 
 export function DeleteModal({
@@ -24,6 +26,7 @@ export function DeleteModal({
   onRequestClose,
   onConfirmAction,
   onClose,
+  isProcessing = false,
 }: DeleteModalProps) {
   const { theme } = useThemeStore();
 
@@ -50,15 +53,17 @@ export function DeleteModal({
       <div className="flex flex-row items-center justify-around w-full md:w-[400px]">
         <button
           onClick={onClose}
-          className="text-black dark:text-white bg-gray-200 dark:bg-slate-700  px-4 py-2 rounded-md  text-[13px] md:text-[14px] mr-4"
+          disabled={isProcessing}
+          className="text-black dark:text-white bg-gray-200 dark:bg-slate-700  px-4 py-2 rounded-md  text-[13px] md:text-[14px] mr-4 disabled:cursor-not-allowed disabled:opacity-50"
         >
           Cancelar remoção
         </button>
         <button
           onClick={onConfirmAction}
-          className="text-white  text-[13px] md:text-[14px] bg-red-500 px-4 py-2 rounded-md"
+          disabled={isProcessing}
+          className="text-white  text-[13px] md:text-[14px] bg-red-500 px-4 py-2 rounded-md disabled:cursor-not-allowed disabled:opacity-50"
         >
-          Confirmar remoção
+          {isProcessing ? "Removendo..." : "Confirmar remoção"}
         </button>
       </div>
     </Modal>

@@ -1,9 +1,9 @@
+import { useAsyncData } from "@/hooks/useAsyncData";
 import {
   listDoneCoolActionsRanking,
   type DoneCoolActionRankingDTO,
 } from "@/services/done-cool-actions";
-import { getErrorMessage, showAlertError } from "@/utils/alerts";
-import { useEffect, useMemo, useState } from "react";
+import { useMemo } from "react";
 import RankingCard from "./components/RankingCard";
 import { MedalIcon } from "@phosphor-icons/react";
 
@@ -13,38 +13,15 @@ const formatMonthLabel = (date: Date) => {
 };
 
 export function LegalCitizenRanking() {
-  const [ranking, setRanking] = useState<DoneCoolActionRankingDTO[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const { data: ranking, isLoading } = useAsyncData(
+    () => listDoneCoolActionsRanking(),
+    {
+      initialData: [] as DoneCoolActionRankingDTO[],
+      errorMessage: "Não foi possível carregar o ranking Cidadão Legal.",
+      resetOnError: true,
+    },
+  );
   const monthLabel = useMemo(() => formatMonthLabel(new Date()), []);
-
-  useEffect(() => {
-    let cancelled = false;
-
-    async function fetchRanking() {
-      setIsLoading(true);
-      try {
-        const result = await listDoneCoolActionsRanking();
-        if (!cancelled) setRanking(result);
-      } catch (error) {
-        if (!cancelled) {
-          setRanking([]);
-          showAlertError(
-            getErrorMessage(
-              error,
-              "Não foi possível carregar o ranking Cidadão Legal.",
-            ),
-          );
-        }
-      } finally {
-        if (!cancelled) setIsLoading(false);
-      }
-    }
-
-    fetchRanking();
-    return () => {
-      cancelled = true;
-    };
-  }, []);
 
   return (
     <main className="min-h-screen w-full bg-gray-100 dark:bg-slate-800">

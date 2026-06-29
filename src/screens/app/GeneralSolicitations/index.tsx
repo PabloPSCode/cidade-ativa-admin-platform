@@ -7,6 +7,7 @@ import {
 import clsx from "clsx";
 import { useEffect, useMemo, useState } from "react";
 import { useSearchParams } from "react-router-dom";
+import { useAsyncData } from "@/hooks/useAsyncData";
 import { useNeighborhoods } from "@/hooks/useNeighborhoods";
 import { listSolicitations } from "@/services/solicitations";
 import FilterSearchCard from "./components/FilterSearchCard";
@@ -43,8 +44,16 @@ const formatCountLabel = (value: number, singular: string, plural: string) =>
 export function GeneralSolicitations() {
   const [searchParams, setSearchParams] = useSearchParams();
 
-  const [solicitations, setSolicitations] = useState<SolicitationRecord[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const { data: solicitations, isLoading } = useAsyncData(
+    () =>
+      listSolicitations({ page: 1, perPage: 100 }).then((result) =>
+        result.data.map(mapSolicitationDTOToRecord),
+      ),
+    {
+      initialData: [] as SolicitationRecord[],
+      errorMessage: "Não foi possível carregar as solicitações.",
+    },
+  );
   const [search, setSearch] = useState("");
   const [selectedNeighborhood, setSelectedNeighborhood] = useState("all");
   const [selectedStatus, setSelectedStatus] = useState<
@@ -54,27 +63,6 @@ export function GeneralSolicitations() {
     useState("all");
   const [dateOrder, setDateOrder] = useState<"recent" | "oldest">("recent");
   const [page, setPage] = useState(1);
-
-  useEffect(() => {
-    let cancelled = false;
-
-    async function fetchSolicitations() {
-      setIsLoading(true);
-      try {
-        const result = await listSolicitations({ page: 1, perPage: 100 });
-        if (!cancelled) {
-          setSolicitations(result.data.map(mapSolicitationDTOToRecord));
-        }
-      } finally {
-        if (!cancelled) setIsLoading(false);
-      }
-    }
-
-    fetchSolicitations();
-    return () => {
-      cancelled = true;
-    };
-  }, []);
 
   useEffect(() => {
     setSelectedStatus(parseStatusParam(searchParams.get("status")));

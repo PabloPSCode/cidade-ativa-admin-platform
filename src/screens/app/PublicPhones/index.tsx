@@ -9,26 +9,31 @@ import {
   type PublicPhoneResponseDTO,
   type UpdatePublicPhoneDTO,
 } from "@/services/public-phones";
-import {
-  getErrorMessage,
-  showAlertError,
-  showAlertSuccess,
-} from "@/utils/alerts";
+import { useAsyncAction } from "@/hooks/useAsyncAction";
+import { useAsyncData } from "@/hooks/useAsyncData";
+import { showAlertSuccess } from "@/utils/alerts";
 import {
   PencilSimpleLineIcon,
   PhoneCallIcon,
   PlusIcon,
   TrashIcon,
 } from "@phosphor-icons/react";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 type FormMode = "create" | "edit";
 
 const ITEMS_PER_PAGE = 5;
 
 export function PublicPhones() {
-  const [phones, setPhones] = useState<PublicPhoneResponseDTO[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const {
+    data: phones,
+    setData: setPhones,
+    isLoading,
+  } = useAsyncData(() => listPublicPhones({ page: 1, perPage: 100 }).then((r) => r.data), {
+    initialData: [] as PublicPhoneResponseDTO[],
+    errorMessage: "Não foi possível carregar os telefones públicos.",
+  });
+
   const [page, setPage] = useState(1);
 
   const [formModalOpen, setFormModalOpen] = useState(false);
@@ -36,38 +41,8 @@ export function PublicPhones() {
   const [editingId, setEditingId] = useState<string | null>(null);
   const [formInstitutionName, setFormInstitutionName] = useState("");
   const [formPhone, setFormPhone] = useState("");
-  const [isSaving, setIsSaving] = useState(false);
 
   const [deleting, setDeleting] = useState<PublicPhoneResponseDTO | null>(null);
-  const [isDeleting, setIsDeleting] = useState(false);
-
-  useEffect(() => {
-    let cancelled = false;
-
-    async function fetchPhones() {
-      setIsLoading(true);
-      try {
-        const result = await listPublicPhones({ page: 1, perPage: 100 });
-        if (!cancelled) setPhones(result.data);
-      } catch (error) {
-        if (!cancelled) {
-          showAlertError(
-            getErrorMessage(
-              error,
-              "Não foi possível carregar os telefones públicos.",
-            ),
-          );
-        }
-      } finally {
-        if (!cancelled) setIsLoading(false);
-      }
-    }
-
-    fetchPhones();
-    return () => {
-      cancelled = true;
-    };
-  }, []);
 
   const handleOpenCreate = () => {
     setFormMode("create");
@@ -93,14 +68,13 @@ export function PublicPhones() {
   const isFormValid =
     formInstitutionName.trim().length > 0 && formPhone.trim().length > 0;
 
-  const handleSave = async () => {
-    if (!isFormValid) return;
+  const { run: handleSave, isPending: isSaving } = useAsyncAction(
+    async () => {
+      if (!isFormValid) return;
 
-    const institutionName = formInstitutionName.trim();
-    const phone = formPhone.trim();
+      const institutionName = formInstitutionName.trim();
+      const phone = formPhone.trim();
 
-    setIsSaving(true);
-    try {
       if (formMode === "create") {
         const payload: CreatePublicPhoneDTO = { institutionName, phone };
         const created = await createPublicPhone(payload);
@@ -115,32 +89,21 @@ export function PublicPhones() {
         showAlertSuccess("Telefone público atualizado com sucesso.");
       }
       setFormModalOpen(false);
-    } catch (error) {
-      showAlertError(
-        getErrorMessage(error, "Não foi possível salvar o telefone público."),
-      );
-    } finally {
-      setIsSaving(false);
-    }
-  };
+    },
+    { errorMessage: "Não foi possível salvar o telefone público." },
+  );
 
-  const handleConfirmDelete = async () => {
-    if (!deleting) return;
+  const { run: handleConfirmDelete, isPending: isDeleting } = useAsyncAction(
+    async () => {
+      if (!deleting) return;
 
-    setIsDeleting(true);
-    try {
       await deletePublicPhone(deleting.id);
       setPhones((current) => current.filter((item) => item.id !== deleting.id));
       showAlertSuccess("Telefone público removido com sucesso.");
       setDeleting(null);
-    } catch (error) {
-      showAlertError(
-        getErrorMessage(error, "Não foi possível remover o telefone público."),
-      );
-    } finally {
-      setIsDeleting(false);
-    }
-  };
+    },
+    { errorMessage: "Não foi possível remover o telefone público." },
+  );
 
   const totalPages = Math.max(1, Math.ceil(phones.length / ITEMS_PER_PAGE));
   const safePage = Math.min(page, totalPages);
@@ -351,6 +314,7 @@ export function PublicPhones() {
       <DeleteModal
         resource="telefone público"
         isOpen={!!deleting}
+        isProcessing={isDeleting}
         onRequestClose={() => {
           if (!isDeleting) setDeleting(null);
         }}

@@ -1,11 +1,9 @@
 import { DeleteModal } from "@/components/miscellaneous/DeleteModal";
 import { Pagination } from "@/components/miscellaneous/Pagination";
+import { useAsyncAction } from "@/hooks/useAsyncAction";
+import { useAsyncData } from "@/hooks/useAsyncData";
 import { deletePoll, listPolls, type PollResponseDTO } from "@/services/polls";
-import {
-  getErrorMessage,
-  showAlertError,
-  showAlertSuccess,
-} from "@/utils/alerts";
+import { showAlertSuccess } from "@/utils/alerts";
 import { ChartBarIcon, PlusIcon } from "@phosphor-icons/react";
 import { useEffect, useMemo, useState } from "react";
 import CreatePollModal from "./components/CreatePollModal";
@@ -18,46 +16,27 @@ import { pollStatusOptions, type PollStatus } from "./constants/polls";
 const ITEMS_PER_PAGE = 5;
 
 export function Polls() {
-  const [polls, setPolls] = useState<PollResponseDTO[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const {
+    data: polls,
+    setData: setPolls,
+    isLoading,
+  } = useAsyncData(() => listPolls({ page: 1, perPage: 100 }).then((r) => r.data), {
+    initialData: [] as PollResponseDTO[],
+    errorMessage: "Não foi possível carregar as enquetes.",
+    resetOnError: true,
+  });
+
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [detailsPoll, setDetailsPoll] = useState<PollResponseDTO | null>(null);
   const [editingPoll, setEditingPoll] = useState<PollResponseDTO | null>(null);
   const [deletingPoll, setDeletingPoll] = useState<PollResponseDTO | null>(
     null,
   );
-  const [isDeleting, setIsDeleting] = useState(false);
   const [search, setSearch] = useState("");
   const [selectedStatus, setSelectedStatus] = useState<PollStatus | "all">(
     "all",
   );
   const [page, setPage] = useState(1);
-
-  useEffect(() => {
-    let cancelled = false;
-
-    async function fetchPolls() {
-      setIsLoading(true);
-      try {
-        const result = await listPolls({ page: 1, perPage: 100 });
-        if (!cancelled) setPolls(result.data);
-      } catch (error) {
-        if (!cancelled) {
-          setPolls([]);
-          showAlertError(
-            getErrorMessage(error, "Não foi possível carregar as enquetes."),
-          );
-        }
-      } finally {
-        if (!cancelled) setIsLoading(false);
-      }
-    }
-
-    fetchPolls();
-    return () => {
-      cancelled = true;
-    };
-  }, []);
 
   useEffect(() => {
     setPage(1);
@@ -89,25 +68,19 @@ export function Polls() {
     setSelectedStatus("all");
   };
 
-  const handleConfirmDelete = async () => {
-    if (!deletingPoll) return;
+  const { run: handleConfirmDelete, isPending: isDeleting } = useAsyncAction(
+    async () => {
+      if (!deletingPoll) return;
 
-    setIsDeleting(true);
-    try {
       await deletePoll(deletingPoll.id);
       setPolls((current) =>
         current.filter((item) => item.id !== deletingPoll.id),
       );
       showAlertSuccess("Enquete removida com sucesso.");
       setDeletingPoll(null);
-    } catch (error) {
-      showAlertError(
-        getErrorMessage(error, "Não foi possível remover a enquete."),
-      );
-    } finally {
-      setIsDeleting(false);
-    }
-  };
+    },
+    { errorMessage: "Não foi possível remover a enquete." },
+  );
 
   const totalPages = Math.max(
     1,
@@ -265,6 +238,7 @@ export function Polls() {
       <DeleteModal
         resource="enquete"
         isOpen={!!deletingPoll}
+        isProcessing={isDeleting}
         onRequestClose={() => {
           if (!isDeleting) setDeletingPoll(null);
         }}

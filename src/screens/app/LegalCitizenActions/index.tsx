@@ -1,3 +1,4 @@
+import { useAsyncData } from "@/hooks/useAsyncData";
 import {
   listCoolActions,
   type CoolActionResponseDTO,
@@ -20,25 +21,23 @@ const PAGES_TO_SHOW = 4;
 export function LegalCitizenActions() {
   const { citizenId = "" } = useParams<{ citizenId: string }>();
 
-  const [citizenName, setCitizenName] = useState("");
-  const [records, setRecords] = useState<DoneCoolActionRecord[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [notFound, setNotFound] = useState(false);
   const [page, setPage] = useState(1);
 
   useEffect(() => {
     setPage(1);
   }, [citizenId]);
 
-  useEffect(() => {
-    if (!citizenId) return;
+  const NOT_FOUND = {
+    citizenName: "",
+    records: [] as DoneCoolActionRecord[],
+    notFound: true,
+  };
 
-    let cancelled = false;
-
-    async function fetchData() {
-      setIsLoading(true);
-      setNotFound(false);
-
+  const {
+    data: { citizenName, records, notFound },
+    isLoading,
+  } = useAsyncData(
+    async () => {
       try {
         const [user, doneResult, coolActionsResult] = await Promise.all([
           getUserById(citizenId).catch(() => null),
@@ -46,35 +45,35 @@ export function LegalCitizenActions() {
           listCoolActions({ perPage: 100 }),
         ]);
 
-        if (cancelled) return;
-
-        if (!user) {
-          setNotFound(true);
-          return;
-        }
+        if (!user) return NOT_FOUND;
 
         const coolActionsById = new Map<string, CoolActionResponseDTO>(
           coolActionsResult.data.map((item) => [item.id, item])
         );
 
-        setCitizenName(user.name);
-        setRecords(
-          doneResult.data.map((item) =>
+        return {
+          citizenName: user.name,
+          records: doneResult.data.map((item) =>
             mapDoneCoolActionToRecord(item, coolActionsById)
-          )
-        );
+          ),
+          notFound: false,
+        };
       } catch {
-        if (!cancelled) setNotFound(true);
-      } finally {
-        if (!cancelled) setIsLoading(false);
+        // Any failed request renders the not-found state, matching the
+        // previous behaviour of staying silent (no error toast).
+        return NOT_FOUND;
       }
-    }
-
-    fetchData();
-    return () => {
-      cancelled = true;
-    };
-  }, [citizenId]);
+    },
+    {
+      initialData: {
+        citizenName: "",
+        records: [] as DoneCoolActionRecord[],
+        notFound: false,
+      },
+      enabled: !!citizenId,
+      deps: [citizenId],
+    },
+  );
 
   const totalPages = Math.max(1, Math.ceil(records.length / ITEMS_PER_PAGE));
   const safePage = Math.min(page, totalPages);

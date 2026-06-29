@@ -11,18 +11,16 @@ import {
   type CreateCoolActionDTO,
   type UpdateCoolActionDTO,
 } from "@/services/cool-actions";
-import {
-  getErrorMessage,
-  showAlertError,
-  showAlertSuccess,
-} from "@/utils/alerts";
+import { useAsyncAction } from "@/hooks/useAsyncAction";
+import { useAsyncData } from "@/hooks/useAsyncData";
+import { showAlertSuccess } from "@/utils/alerts";
 import {
   HandHeartIcon,
   PencilSimpleLineIcon,
   PlusIcon,
   TrashIcon,
 } from "@phosphor-icons/react";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 type FormMode = "create" | "edit";
 
@@ -43,8 +41,15 @@ const categoryLabel = (category: CoolActionCategory) =>
   category;
 
 export function CoolActions() {
-  const [coolActions, setCoolActions] = useState<CoolActionResponseDTO[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const {
+    data: coolActions,
+    setData: setCoolActions,
+    isLoading,
+  } = useAsyncData(() => listCoolActions({ page: 1, perPage: 100 }).then((r) => r.data), {
+    initialData: [] as CoolActionResponseDTO[],
+    errorMessage: "Não foi possível carregar as ações.",
+  });
+
   const [page, setPage] = useState(1);
 
   const [formModalOpen, setFormModalOpen] = useState(false);
@@ -53,35 +58,8 @@ export function CoolActions() {
   const [formTitle, setFormTitle] = useState("");
   const [formCategory, setFormCategory] = useState<CoolActionCategory | "">("");
   const [formPoints, setFormPoints] = useState("");
-  const [isSaving, setIsSaving] = useState(false);
 
   const [deleting, setDeleting] = useState<CoolActionResponseDTO | null>(null);
-  const [isDeleting, setIsDeleting] = useState(false);
-
-  useEffect(() => {
-    let cancelled = false;
-
-    async function fetchCoolActions() {
-      setIsLoading(true);
-      try {
-        const result = await listCoolActions({ page: 1, perPage: 100 });
-        if (!cancelled) setCoolActions(result.data);
-      } catch (error) {
-        if (!cancelled) {
-          showAlertError(
-            getErrorMessage(error, "Não foi possível carregar as ações."),
-          );
-        }
-      } finally {
-        if (!cancelled) setIsLoading(false);
-      }
-    }
-
-    fetchCoolActions();
-    return () => {
-      cancelled = true;
-    };
-  }, []);
 
   const handleOpenCreate = () => {
     setFormMode("create");
@@ -114,13 +92,12 @@ export function CoolActions() {
     Number.isInteger(pointsNumber) &&
     pointsNumber > 0;
 
-  const handleSave = async () => {
-    if (!isFormValid) return;
+  const { run: handleSave, isPending: isSaving } = useAsyncAction(
+    async () => {
+      if (!isFormValid) return;
 
-    const title = formTitle.trim();
+      const title = formTitle.trim();
 
-    setIsSaving(true);
-    try {
       if (formMode === "create") {
         const payload: CreateCoolActionDTO = {
           title,
@@ -143,32 +120,23 @@ export function CoolActions() {
         showAlertSuccess("Ação atualizada com sucesso.");
       }
       setFormModalOpen(false);
-    } catch (error) {
-      showAlertError(getErrorMessage(error, "Não foi possível salvar a ação."));
-    } finally {
-      setIsSaving(false);
-    }
-  };
+    },
+    { errorMessage: "Não foi possível salvar a ação." },
+  );
 
-  const handleConfirmDelete = async () => {
-    if (!deleting) return;
+  const { run: handleConfirmDelete, isPending: isDeleting } = useAsyncAction(
+    async () => {
+      if (!deleting) return;
 
-    setIsDeleting(true);
-    try {
       await deleteCoolAction(deleting.id);
       setCoolActions((current) =>
         current.filter((item) => item.id !== deleting.id),
       );
       showAlertSuccess("Ação removida com sucesso.");
       setDeleting(null);
-    } catch (error) {
-      showAlertError(
-        getErrorMessage(error, "Não foi possível remover a ação."),
-      );
-    } finally {
-      setIsDeleting(false);
-    }
-  };
+    },
+    { errorMessage: "Não foi possível remover a ação." },
+  );
 
   const totalPages = Math.max(
     1,
@@ -406,6 +374,7 @@ export function CoolActions() {
       <DeleteModal
         resource="ação"
         isOpen={!!deleting}
+        isProcessing={isDeleting}
         onRequestClose={() => {
           if (!isDeleting) setDeleting(null);
         }}

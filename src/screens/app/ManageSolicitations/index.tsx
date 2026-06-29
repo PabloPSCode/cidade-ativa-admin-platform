@@ -14,11 +14,9 @@ import {
   solveSolicitation,
   unconsiderSolicitation,
 } from "@/services/solicitations";
-import {
-  getErrorMessage,
-  showAlertError,
-  showAlertSuccess,
-} from "@/utils/alerts";
+import { useAsyncAction } from "@/hooks/useAsyncAction";
+import { useAsyncData } from "@/hooks/useAsyncData";
+import { getErrorMessage, showAlertError, showAlertSuccess } from "@/utils/alerts";
 import {
   BuildingsIcon,
   CheckCircleIcon,
@@ -26,7 +24,7 @@ import {
   ThumbsUpIcon,
   UsersThreeIcon,
 } from "@phosphor-icons/react";
-import { useCallback, useEffect, useState, type ChangeEvent } from "react";
+import { useState, type ChangeEvent } from "react";
 import { useParams } from "react-router-dom";
 import {
   mapSolicitationDTOToRecord,
@@ -37,80 +35,54 @@ import SolicitationDetailsCard from "./components/SolicitationDetailsCard";
 
 export function ManageSolicitations() {
   const { id } = useParams<{ id: string }>();
-  const [solicitation, setSolicitation] = useState<SolicitationRecord>();
-  const [isLoading, setIsLoading] = useState(true);
+
+  const {
+    data: solicitation,
+    setData: setSolicitation,
+    isLoading,
+  } = useAsyncData(
+    () => getSolicitationById(id!).then(mapSolicitationDTOToRecord),
+    {
+      initialData: undefined as SolicitationRecord | undefined,
+      enabled: !!id,
+      deps: [id],
+      resetOnError: true,
+      errorMessage: "Não foi possível carregar a solicitação.",
+    },
+  );
+
+  const { data: signatures } = useAsyncData(
+    () => listSignaturesBySolicitation(id!),
+    {
+      initialData: [] as SolicitationSignatureResponseDTO[],
+      enabled: !!id,
+      deps: [id],
+      resetOnError: true,
+      // Signatures are non-critical: fall back to an empty list silently.
+      onError: () => {},
+    },
+  );
 
   const [solveModalOpen, setSolveModalOpen] = useState(false);
   const [solvedPhotos, setSolvedPhotos] = useState<IFile[]>([]);
   const [solvedCommentary, setSolvedCommentary] = useState("");
   const [isUploadingPhotos, setIsUploadingPhotos] = useState(false);
-  const [isSolving, setIsSolving] = useState(false);
   const [uploadKey, setUploadKey] = useState(0);
 
   const [unconsiderModalOpen, setUnconsiderModalOpen] = useState(false);
   const [unconsiderCommentary, setUnconsiderCommentary] = useState("");
-  const [isUnconsidering, setIsUnconsidering] = useState(false);
 
-  const [signatures, setSignatures] = useState<
-    SolicitationSignatureResponseDTO[]
-  >([]);
   const [signaturesModalOpen, setSignaturesModalOpen] = useState(false);
 
-  useEffect(() => {
-    if (!id) return;
-    let cancelled = false;
-
-    listSignaturesBySolicitation(id)
-      .then((list) => {
-        if (!cancelled) setSignatures(list);
-      })
-      .catch(() => {
-        if (!cancelled) setSignatures([]);
-      });
-
-    return () => {
-      cancelled = true;
-    };
-  }, [id]);
-
-  const fetchSolicitation = useCallback(async () => {
-    if (!id) {
-      setSolicitation(undefined);
-      setIsLoading(false);
-      return;
-    }
-
-    setIsLoading(true);
-    try {
-      const dto = await getSolicitationById(id);
-      setSolicitation(mapSolicitationDTOToRecord(dto));
-    } catch (error) {
-      setSolicitation(undefined);
-      showAlertError(
-        getErrorMessage(error, "Não foi possível carregar a solicitação."),
-      );
-    } finally {
-      setIsLoading(false);
-    }
-  }, [id]);
-
-  useEffect(() => {
-    fetchSolicitation();
-  }, [fetchSolicitation]);
-
-  const handleApprove = async () => {
-    if (!id) return;
-
-    try {
+  const { run: handleApprove, isPending: isApproving } = useAsyncAction(
+    async () => {
+      if (!id) return;
       const dto = await approveSolicitation(id);
       setSolicitation(mapSolicitationDTOToRecord(dto));
       showAlertSuccess("Solicitação aprovada e movida para em andamento.");
-    } catch (error) {
-      showAlertError(
-        getErrorMessage(error, "Não foi possível aprovar a solicitação."),
-      );
-    }
-  };
+    },
+    { errorMessage: "Não foi possível aprovar a solicitação." },
+  );
 
   const readFileAsUploadedFile = (file: File): Promise<IFile> =>
     new Promise((resolve, reject) => {
@@ -158,15 +130,11 @@ export function ManageSolicitations() {
     setSolvedPhotos((prev) => prev.filter((_, i) => i !== index));
   };
 
-  const canConfirmSolve =
-    solvedPhotos.length > 0 && !isUploadingPhotos && !isSolving;
+  const { run: handleConfirmSolve, isPending: isSolving } = useAsyncAction(
+    async () => {
+      if (!id || solvedPhotos.length === 0) return;
 
-  const handleConfirmSolve = async () => {
-    if (!id || solvedPhotos.length === 0) return;
-
-    const commentary = solvedCommentary.trim();
-    setIsSolving(true);
-    try {
+      const commentary = solvedCommentary.trim();
       const dto = await solveSolicitation(id, {
         solvedImageUrls: solvedPhotos.map((photo) => photo.uri),
         ...(commentary ? { solvedCommentary: commentary } : {}),
@@ -174,38 +142,31 @@ export function ManageSolicitations() {
       setSolicitation(mapSolicitationDTOToRecord(dto));
       setSolveModalOpen(false);
       showAlertSuccess("Solicitação marcada como resolvida.");
-    } catch (error) {
-      showAlertError(
-        getErrorMessage(error, "Não foi possível resolver a solicitação."),
-      );
-    } finally {
-      setIsSolving(false);
-    }
-  };
+    },
+    { errorMessage: "Não foi possível resolver a solicitação." },
+  );
+
+  const canConfirmSolve =
+    solvedPhotos.length > 0 && !isUploadingPhotos && !isSolving;
 
   const handleOpenUnconsiderModal = () => {
     setUnconsiderCommentary("");
     setUnconsiderModalOpen(true);
   };
 
-  const handleConfirmUnconsider = async () => {
-    const commentary = unconsiderCommentary.trim();
-    if (!id || commentary.length === 0) return;
+  const { run: handleConfirmUnconsider, isPending: isUnconsidering } =
+    useAsyncAction(
+      async () => {
+        const commentary = unconsiderCommentary.trim();
+        if (!id || commentary.length === 0) return;
 
-    setIsUnconsidering(true);
-    try {
-      const dto = await unconsiderSolicitation(id, commentary);
-      setSolicitation(mapSolicitationDTOToRecord(dto));
-      setUnconsiderModalOpen(false);
-      showAlertSuccess("Solicitação desconsiderada.");
-    } catch (error) {
-      showAlertError(
-        getErrorMessage(error, "Não foi possível desconsiderar a solicitação."),
-      );
-    } finally {
-      setIsUnconsidering(false);
-    }
-  };
+        const dto = await unconsiderSolicitation(id, commentary);
+        setSolicitation(mapSolicitationDTOToRecord(dto));
+        setUnconsiderModalOpen(false);
+        showAlertSuccess("Solicitação desconsiderada.");
+      },
+      { errorMessage: "Não foi possível desconsiderar a solicitação." },
+    );
 
   const canApprove = solicitation?.status === "waiting_approval";
   const canMarkSolved =
@@ -265,10 +226,11 @@ export function ManageSolicitations() {
                     <button
                       type="button"
                       onClick={handleApprove}
-                      className="inline-flex shrink-0 items-center justify-center gap-2 rounded-sm !bg-primary-500 px-5 py-3 text-sm font-medium !text-white transition hover:!bg-primary-600"
+                      disabled={isApproving}
+                      className="inline-flex shrink-0 items-center justify-center gap-2 rounded-sm !bg-primary-500 px-5 py-3 text-sm font-medium !text-white transition hover:!bg-primary-600 disabled:cursor-not-allowed disabled:opacity-50"
                     >
                       <ThumbsUpIcon size={18} weight="fill" />
-                      Aprovar solicitação
+                      {isApproving ? "Aprovando..." : "Aprovar solicitação"}
                     </button>
                   )}
 
